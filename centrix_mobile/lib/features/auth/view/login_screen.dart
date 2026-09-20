@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodel/login_viewmodel.dart';
 import 'widgets/login_header.dart';
+import '../../dashboard/view/dashboard_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -89,10 +90,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: viewModel.isLoading
                               ? null
-                              : () {
-                                  viewModel.login(
+                              : () async {
+                                  final success = await viewModel.login(
                                     _emailController.text.trim(),
                                     _passwordController.text,
+                                  );
+                                  if (!mounted || !success) return;
+
+                                  final user = viewModel.authenticatedUser;
+                                  if (user == null) return;
+
+                                  await Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute<void>(
+                                      builder: (_) =>
+                                          DashboardRouter(user: user),
+                                    ),
                                   );
                                 },
                           style: ElevatedButton.styleFrom(
