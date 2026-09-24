@@ -6,7 +6,7 @@ class LoginResponse {
   final UserModel? user;
   final String? token;
 
-  LoginResponse({
+  const LoginResponse({
     required this.success,
     required this.message,
     this.user,

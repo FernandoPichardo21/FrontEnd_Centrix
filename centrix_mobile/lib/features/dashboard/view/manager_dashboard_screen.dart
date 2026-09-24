@@ -3,9 +3,14 @@ import '../../auth/data/models/user_model.dart';
 import 'widgets/dashboard_shell.dart';
 
 class ManagerDashboardScreen extends StatelessWidget {
-  const ManagerDashboardScreen({super.key, required this.user});
+  const ManagerDashboardScreen({
+    super.key,
+    required this.user,
+    required this.onLogout,
+  });
 
   final UserModel user;
+  final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +18,7 @@ class ManagerDashboardScreen extends StatelessWidget {
       userName: user.fullName,
       userEmail: user.email,
       roleLabel: 'Panel de gerente',
+      onLogout: onLogout,
       actions: const [
         DashboardAction(
           title: 'Tickets pendientes',

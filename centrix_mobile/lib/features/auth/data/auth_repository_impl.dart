@@ -5,34 +5,43 @@ import 'models/login_request.dart';
 import 'models/login_response.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final http.Client client;
-  final String baseUrl = 'http://localhost:3000/api/auth';
+  AuthRepositoryImpl({
+    required http.Client client,
+    required String baseUrl,
+  })  : _client = client,
+        _baseUrl = baseUrl;
 
-  AuthRepositoryImpl({required this.client});
+  final http.Client _client;
+  final String _baseUrl;
 
   @override
   Future<LoginResponse> login(LoginRequest request) async {
     try {
-      final response = await client.post(
-        Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/api/auth/login'),
+        headers: const {'Content-Type': 'application/json'},
         body: jsonEncode(request.toJson()),
       );
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode == 200) {
-        return LoginResponse.fromJson(jsonDecode(response.body));
-      } else {
-        // Handle non-200 responses
-        final body = jsonDecode(response.body);
-        return LoginResponse(
-          success: false,
-          message: body['message'] ?? 'Error de servidor (${response.statusCode})',
-        );
+        return LoginResponse.fromJson(body);
       }
-    } catch (e) {
+
       return LoginResponse(
         success: false,
-        message: 'Error de conexión: $e',
+        message: body['message'] as String? ??
+            'Error de servidor (${response.statusCode})',
+      );
+    } on FormatException {
+      return const LoginResponse(
+        success: false,
+        message: 'El backend devolvió una respuesta no válida',
+      );
+    } catch (_) {
+      return const LoginResponse(
+        success: false,
+        message: 'No fue posible conectar con el backend',
       );
     }
   }

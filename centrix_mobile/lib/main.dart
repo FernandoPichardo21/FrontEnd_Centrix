@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
+import 'config/api_config.dart';
 import 'features/auth/data/auth_repository_impl.dart';
 import 'features/auth/view/login_screen.dart';
 import 'features/auth/viewmodel/login_viewmodel.dart';
 
 void main() {
-  // Dependency Injection setup
-  final httpClient = http.Client();
-  final authRepository = AuthRepositoryImpl(client: httpClient);
+  final authRepository = AuthRepositoryImpl(
+    client: http.Client(),
+    baseUrl: ApiConfig.baseUrl,
+  );
 
   runApp(
     MultiProvider(
@@ -35,6 +37,9 @@ class CentrixApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Inter', // Assuming Inter or similar sans-serif font
       ),
+      routes: {
+        '/login': (_) => const LoginScreen(),
+      },
       home: const LoginScreen(),
     );
   }
