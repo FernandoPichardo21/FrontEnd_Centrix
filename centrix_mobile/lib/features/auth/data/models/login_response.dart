@@ -14,16 +14,17 @@ class LoginResponse {
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'];
     UserModel? userModel;
-    if (json['data'] != null && json['data']['user'] != null) {
-      userModel = UserModel.fromJson(json['data']['user']);
+    if (data is Map<String, dynamic> && data['user'] != null) {
+      userModel = UserModel.fromJson(data['user'] as Map<String, dynamic>);
     }
 
     return LoginResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
       user: userModel,
-      token: json['token'],
+      token: data is Map<String, dynamic> ? data['token'] as String? : null,
     );
   }
 }
