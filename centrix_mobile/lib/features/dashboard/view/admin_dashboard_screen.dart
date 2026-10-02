@@ -3,7 +3,7 @@ import '../../auth/data/models/user_model.dart';
 import 'widgets/dashboard_shell.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({super.key, required this.user});
+  const AdminDashboardScreen({required this.user, super.key});
 
   final UserModel user;
 

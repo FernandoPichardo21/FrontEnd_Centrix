@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UnsupportedRoleScreen extends StatelessWidget {
-  const UnsupportedRoleScreen({super.key, required this.role});
+  const UnsupportedRoleScreen({required this.role, super.key});
 
   final String role;
 

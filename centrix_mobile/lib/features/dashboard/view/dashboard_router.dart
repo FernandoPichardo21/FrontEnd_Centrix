@@ -7,7 +7,7 @@ import 'manager_dashboard_screen.dart';
 import 'unsupported_role_screen.dart';
 
 class DashboardRouter extends StatelessWidget {
-  const DashboardRouter({super.key, required this.user});
+  const DashboardRouter({required this.user, super.key});
 
   final UserModel user;
 

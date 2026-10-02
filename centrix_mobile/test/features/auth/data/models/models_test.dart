@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:centrix_mobile/features/auth/data/models/login_request.dart';
 import 'package:centrix_mobile/features/auth/data/models/login_response.dart';
-import 'package:centrix_mobile/features/auth/data/models/user_model.dart';
 
 void main() {
   // ─────────────────────────────────────────────────────────────────────────

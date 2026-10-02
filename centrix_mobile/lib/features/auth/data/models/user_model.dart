@@ -1,10 +1,4 @@
 class UserModel {
-  final String id;
-  final String email;
-  final String fullName;
-  final String role;
-  final String tel;
-
   UserModel({
     required this.id,
     required this.email,
@@ -22,6 +16,12 @@ class UserModel {
       tel: json['tel'] ?? '',
     );
   }
+
+  final String id;
+  final String email;
+  final String fullName;
+  final String role;
+  final String tel;
 
   Map<String, dynamic> toJson() {
     return {

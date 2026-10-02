@@ -19,11 +19,11 @@ class DashboardAction {
 
 class DashboardShell extends StatelessWidget {
   const DashboardShell({
-    super.key,
     required this.userName,
     required this.userEmail,
     required this.roleLabel,
     required this.actions,
+    super.key,
   });
 
   final String userName;
@@ -203,7 +203,8 @@ class _WelcomeBanner extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
+                    // ignore: deprecated_member_use
+                    color: Colors.white.withOpacity(0.14),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

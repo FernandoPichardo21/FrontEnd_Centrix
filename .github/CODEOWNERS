@@ -1,0 +1,34 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CODEOWNERS — Centrix Mobile
+# ─────────────────────────────────────────────────────────────────────────────
+# Cada línea define qué usuarios/equipos son revisores obligatorios
+# cuando se modifica un path en un Pull Request.
+#
+# Formato:  <patrón-de-path>  <@usuario-o-@org/equipo>
+#
+# Documentación: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Propietario global (revisor por defecto de todo lo que no esté cubierto abajo)
+*                                   @FernandoPichardo21
+
+# ── Configuración de CI/CD y workflows ──────────────────────────────────────
+.github/                            @FernandoPichardo21
+.github/workflows/                  @FernandoPichardo21
+
+# ── Archivos de gobernanza ───────────────────────────────────────────────────
+CONTRIBUTING.md                     @FernandoPichardo21
+DEPLOYMENT_STRATEGY.md              @FernandoPichardo21
+
+# ── Capa de datos (acceso a API y modelos) ───────────────────────────────────
+centrix_mobile/lib/features/auth/data/          @FernandoPichardo21
+
+
+# ── Pruebas unitarias ────────────────────────────────────────────────────────
+centrix_mobile/test/                            @FernandoPichardo21
+
+# ── Android nativo ────────────────────────────────────────────────────────────
+android/                            @FernandoPichardo21
+
+# ── iOS nativo ────────────────────────────────────────────────────────────────
+ios/                                @FernandoPichardo21

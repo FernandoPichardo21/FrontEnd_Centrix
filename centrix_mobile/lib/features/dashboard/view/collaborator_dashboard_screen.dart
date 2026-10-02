@@ -3,7 +3,7 @@ import '../../auth/data/models/user_model.dart';
 import 'widgets/dashboard_shell.dart';
 
 class CollaboratorDashboardScreen extends StatelessWidget {
-  const CollaboratorDashboardScreen({super.key, required this.user});
+  const CollaboratorDashboardScreen({required this.user, super.key});
 
   final UserModel user;
 

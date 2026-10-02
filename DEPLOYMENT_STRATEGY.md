@@ -82,41 +82,6 @@ Cada incremento está separado por un período de monitoreo (mínimo 24h). Si la
 
 ---
 
-### 2.5 Feature Flags
-
-**Descripción:** Las funcionalidades se despliegan desactivadas por defecto y se habilitan remotamente para subconjuntos de usuarios sin necesidad de publicar una nueva versión en la tienda.
-
-**Herramienta recomendada:** Firebase Remote Config (gratuito, compatible con Flutter)
-
-**Flags propuestos para Centrix Mobile:**
-
-| Flag | Tipo | Valor Default | Propósito |
-|---|---|---|---|
-| `login_enabled` | `bool` | `true` | Kill switch de emergencia para login |
-| `show_signup_button` | `bool` | `false` | Habilita el botón "Sign Up" (no implementado aún) |
-| `api_base_url` | `String` | `prod` | Permite apuntar a staging sin rebuild |
-| `max_login_retries` | `int` | `3` | Control de intentos antes de bloquear |
-| `enable_biometric_auth` | `bool` | `false` | Feature futura de autenticación biométrica |
-
-**Implementación Flutter (esquema):**
-
-```dart
-// lib/core/config/feature_flags.dart
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-
-class FeatureFlags {
-  static final _rc = FirebaseRemoteConfig.instance;
-
-  static bool get loginEnabled => _rc.getBool('login_enabled');
-  static bool get showSignupButton => _rc.getBool('show_signup_button');
-  static String get apiBaseUrl => _rc.getString('api_base_url');
-}
-```
-
-**Justificación:** En la arquitectura actual, el `AuthRepositoryImpl` usa `baseUrl` hardcodeada a `localhost:3000`. Los feature flags permitirán cambiar el endpoint por entorno (dev / staging / prod) sin publicar un update.
-
----
-
 ## 3. Pipeline de Despliegue Completo Recomendado
 
 ```
@@ -136,8 +101,6 @@ class FeatureFlags {
 │     │      <- Monitoreo 24h: Crashlytics + Analytics ->      │
 │     ▼  (umbrales OK)                                         │
 │  Rollout Gradual: 5% -> 25% -> 50% -> 100%                   │
-│     │                                                         │
-│  Feature Flags activos en toda la base de usuarios           │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -163,7 +126,6 @@ Antes de cada incremento del rollout:
 - [ ] Tiempo medio de login < 2s
 - [ ] Tasa de error HTTP 4xx/5xx < 3%
 - [ ] 0 issues críticos abiertos en GitHub Issues
-- [ ] Feature flags configurados en Firebase Remote Config
 - [ ] Notas de release escritas en inglés y español
 - [ ] QA firmó el sign-off en el PR de release
 
@@ -175,7 +137,6 @@ Antes de cada incremento del rollout:
 |---|---|---|
 | Firebase Crashlytics | Crash reporting en tiempo real | `firebase_crashlytics` |
 | Firebase Analytics | Funnel de conversión de login | `firebase_analytics` |
-| Firebase Remote Config | Feature flags y configuración | `firebase_remote_config` |
 | Google Play Console | Métricas de rollout Android | Nativo |
 | Apple TestFlight / App Store Connect | Métricas iOS | Nativo |
 | GitHub Actions | CI/CD pipeline | `.github/workflows/` |
@@ -184,10 +145,9 @@ Antes de cada incremento del rollout:
 
 ## 7. Justificación de la Elección Final
 
-El **rollout escalonado + feature flags + canales de testing** es la estrategia óptima para Centrix Mobile porque:
+El **rollout escalonado + canales de testing** es la estrategia óptima para Centrix Mobile porque:
 
 1. **Reduce el riesgo** al exponer la nueva versión progresivamente, permitiendo revertir con un simple ajuste del porcentaje en Play Console sin rollback de código.
-2. **Los feature flags** desacoplan el despliegue del código de la activación de funcionalidades, fundamental mientras el módulo de autenticación es la única feature productiva.
-3. **El pipeline CI ya definido** garantiza que ninguna versión con lint warnings, type errors o tests fallidos llegue a producción.
-4. **El big bang se descarta** porque la arquitectura actual carece de tests E2E y no hay historial de estabilidad productiva.
-5. **La estrategia es escalable**: cuando el proyecto crezca con nuevas features, los feature flags permiten desarrollo en trunk-based sin romper producción.
+2. **El pipeline CI ya definido** garantiza que ninguna versión con lint warnings, type errors o tests fallidos llegue a producción.
+3. **El big bang se descarta** porque la arquitectura actual carece de tests E2E y no hay historial de estabilidad productiva.
+4. **La estrategia es escalable**: cuando el proyecto crezca con nuevas features, se podrán introducir feature flags u otras tácticas sin descartar esta base sólida de rollout.

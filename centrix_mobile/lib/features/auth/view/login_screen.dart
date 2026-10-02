@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _emailController.text.trim(),
                                     _passwordController.text,
                                   );
-                                  if (!mounted || !success) return;
+                                  if (!context.mounted || !success) return;
 
                                   final user = viewModel.authenticatedUser;
                                   if (user == null) return;
