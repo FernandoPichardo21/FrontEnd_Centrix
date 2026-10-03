@@ -71,7 +71,12 @@ void main() {
       const testPassword = 'password_seguro';
 
       setUp(() {
-        final dummyUser = UserModel(id: '1', email: testEmail, fullName: 'User', role: 'admin', tel: '123');
+        final dummyUser = UserModel(
+            id: '1',
+            email: testEmail,
+            fullName: 'User',
+            role: 'admin',
+            tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async => LoginResponse(
             success: true,
@@ -158,9 +163,15 @@ void main() {
     // ── Notificaciones a la UI ──────────────────────────────────────────────
     group('notifyListeners()', () {
       test('notifica al menos dos veces (inicio y fin de loading)', () async {
-        final dummyUser = UserModel(id: '1', email: 'a@b.com', fullName: 'User', role: 'admin', tel: '123');
+        final dummyUser = UserModel(
+            id: '1',
+            email: 'a@b.com',
+            fullName: 'User',
+            role: 'admin',
+            tel: '123');
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(success: true, message: 'ok', user: dummyUser),
+          (_) async =>
+              LoginResponse(success: true, message: 'ok', user: dummyUser),
         );
 
         int notificaciones = 0;

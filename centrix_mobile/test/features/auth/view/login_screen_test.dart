@@ -102,7 +102,12 @@ void main() {
       testWidgets('muestra CircularProgressIndicator mientras isLoading = true',
           (tester) async {
         // Simula un delay para capturar el estado de loading
-        final dummyUser = UserModel(id: '1', email: 'user@centrix.com', fullName: 'User', role: 'colaborador', tel: '123');
+        final dummyUser = UserModel(
+            id: '1',
+            email: 'user@centrix.com',
+            fullName: 'User',
+            role: 'colaborador',
+            tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async {
             await Future.delayed(const Duration(seconds: 1));
@@ -120,7 +125,8 @@ void main() {
         await tester.pump(); // Primer frame tras el tap
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
-        expect(find.text('Login'), findsOneWidget); // Solo queda el título, el botón tiene CircularProgressIndicator
+        expect(find.text('Login'),
+            findsOneWidget); // Solo queda el título, el botón tiene CircularProgressIndicator
 
         // Finaliza la operación asíncrona
         await tester.pumpAndSettle();
@@ -128,7 +134,12 @@ void main() {
 
       testWidgets('deshabilita el botón mientras isLoading = true',
           (tester) async {
-        final dummyUser = UserModel(id: '1', email: 'user@centrix.com', fullName: 'User', role: 'colaborador', tel: '123');
+        final dummyUser = UserModel(
+            id: '1',
+            email: 'user@centrix.com',
+            fullName: 'User',
+            role: 'colaborador',
+            tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async {
             await Future.delayed(const Duration(seconds: 1));
@@ -191,10 +202,18 @@ void main() {
     group('mensaje de éxito', () {
       testWidgets('navega al dashboard cuando login es correcto',
           (tester) async {
-        final dummyUser = UserModel(id: '1', email: 'admin@centrix.com', fullName: 'Admin', role: 'colaborador', tel: '123');
+        final dummyUser = UserModel(
+            id: '1',
+            email: 'admin@centrix.com',
+            fullName: 'Admin',
+            role: 'colaborador',
+            tel: '123');
         when(mockRepository.login(any)).thenAnswer(
-          (_) async =>
-              LoginResponse(success: true, message: 'ok', token: 'token_xyz', user: dummyUser),
+          (_) async => LoginResponse(
+              success: true,
+              message: 'ok',
+              token: 'token_xyz',
+              user: dummyUser),
         );
 
         await tester.pumpWidget(buildTestApp(viewModel: viewModel));
