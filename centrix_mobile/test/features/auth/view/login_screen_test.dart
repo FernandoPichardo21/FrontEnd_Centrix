@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:centrix_mobile/features/auth/data/auth_repository.dart';
 import 'package:centrix_mobile/features/auth/data/models/login_response.dart';
+import 'package:centrix_mobile/features/auth/data/models/user_model.dart';
 import 'package:centrix_mobile/features/auth/view/login_screen.dart';
 import 'package:centrix_mobile/features/auth/viewmodel/login_viewmodel.dart';
 
@@ -101,10 +102,11 @@ void main() {
       testWidgets('muestra CircularProgressIndicator mientras isLoading = true',
           (tester) async {
         // Simula un delay para capturar el estado de loading
+        final dummyUser = UserModel(id: '1', email: 'user@centrix.com', fullName: 'User', role: 'colaborador', tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async {
             await Future.delayed(const Duration(seconds: 1));
-            return LoginResponse(success: true, message: 'ok');
+            return LoginResponse(success: true, message: 'ok', user: dummyUser);
           },
         );
 
@@ -118,7 +120,7 @@ void main() {
         await tester.pump(); // Primer frame tras el tap
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
-        expect(find.text('Login'), findsNothing); // El texto desaparece
+        expect(find.text('Login'), findsOneWidget); // Solo queda el título, el botón tiene CircularProgressIndicator
 
         // Finaliza la operación asíncrona
         await tester.pumpAndSettle();
@@ -126,10 +128,11 @@ void main() {
 
       testWidgets('deshabilita el botón mientras isLoading = true',
           (tester) async {
+        final dummyUser = UserModel(id: '1', email: 'user@centrix.com', fullName: 'User', role: 'colaborador', tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async {
             await Future.delayed(const Duration(seconds: 1));
-            return LoginResponse(success: true, message: 'ok');
+            return LoginResponse(success: true, message: 'ok', user: dummyUser);
           },
         );
 
@@ -186,11 +189,12 @@ void main() {
 
     // ── Mensaje de éxito ────────────────────────────────────────────────────
     group('mensaje de éxito', () {
-      testWidgets('muestra mensaje de éxito cuando login es correcto',
+      testWidgets('navega al dashboard cuando login es correcto',
           (tester) async {
+        final dummyUser = UserModel(id: '1', email: 'admin@centrix.com', fullName: 'Admin', role: 'colaborador', tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async =>
-              LoginResponse(success: true, message: 'ok', token: 'token_xyz'),
+              LoginResponse(success: true, message: 'ok', token: 'token_xyz', user: dummyUser),
         );
 
         await tester.pumpWidget(buildTestApp(viewModel: viewModel));
@@ -202,7 +206,7 @@ void main() {
         await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
         await tester.pumpAndSettle();
 
-        expect(find.textContaining('exitoso'), findsOneWidget);
+        expect(find.text('Panel de colaborador'), findsOneWidget);
       });
     });
   });

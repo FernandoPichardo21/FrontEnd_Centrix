@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:centrix_mobile/features/auth/data/auth_repository.dart';
 import 'package:centrix_mobile/features/auth/data/models/login_request.dart';
 import 'package:centrix_mobile/features/auth/data/models/login_response.dart';
+import 'package:centrix_mobile/features/auth/data/models/user_model.dart';
 import 'package:centrix_mobile/features/auth/viewmodel/login_viewmodel.dart';
 
 // Genera el mock automáticamente con: dart run build_runner build
@@ -70,11 +71,13 @@ void main() {
       const testPassword = 'password_seguro';
 
       setUp(() {
+        final dummyUser = UserModel(id: '1', email: testEmail, fullName: 'User', role: 'admin', tel: '123');
         when(mockRepository.login(any)).thenAnswer(
           (_) async => LoginResponse(
             success: true,
             message: 'Autenticación exitosa',
             token: 'jwt_token_centrix_123',
+            user: dummyUser,
           ),
         );
       });
@@ -155,8 +158,9 @@ void main() {
     // ── Notificaciones a la UI ──────────────────────────────────────────────
     group('notifyListeners()', () {
       test('notifica al menos dos veces (inicio y fin de loading)', () async {
+        final dummyUser = UserModel(id: '1', email: 'a@b.com', fullName: 'User', role: 'admin', tel: '123');
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(success: true, message: 'ok'),
+          (_) async => LoginResponse(success: true, message: 'ok', user: dummyUser),
         );
 
         int notificaciones = 0;

@@ -39,12 +39,12 @@ void main() {
         final json = {
           'success': true,
           'message': 'Autenticado correctamente',
-          'token': 'eyJhbGciOiJIUzI1NiJ9.test',
           'data': {
+            'token': 'eyJhbGciOiJIUzI1NiJ9.test',
             'user': {
-              'id': 1,
+              'id': '1',
               'email': 'usuario@centrix.com',
-              'name': 'Juan Pérez',
+              'fullName': 'Juan Pérez',
             },
           },
         };
