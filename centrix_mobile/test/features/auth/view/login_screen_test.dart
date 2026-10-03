@@ -112,8 +112,7 @@ void main() {
         await tester.enterText(
             find.widgetWithText(TextField, 'ejemplo@correo.com'),
             'user@centrix.com');
-        await tester.enterText(
-            find.byType(TextField).at(1), 'password123');
+        await tester.enterText(find.byType(TextField).at(1), 'password123');
 
         await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
         await tester.pump(); // Primer frame tras el tap
@@ -143,8 +142,8 @@ void main() {
         await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
         await tester.pump();
 
-        final button = tester.widget<ElevatedButton>(
-            find.byType(ElevatedButton));
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
         expect(button.onPressed, isNull); // Deshabilitado
 
         await tester.pumpAndSettle();
@@ -156,8 +155,7 @@ void main() {
       testWidgets('muestra error cuando login falla', (tester) async {
         const errorMessage = 'Credenciales inválidas';
         when(mockRepository.login(any)).thenAnswer(
-          (_) async =>
-              LoginResponse(success: false, message: errorMessage),
+          (_) async => LoginResponse(success: false, message: errorMessage),
         );
 
         await tester.pumpWidget(buildTestApp(viewModel: viewModel));
@@ -191,8 +189,8 @@ void main() {
       testWidgets('muestra mensaje de éxito cuando login es correcto',
           (tester) async {
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(
-              success: true, message: 'ok', token: 'token_xyz'),
+          (_) async =>
+              LoginResponse(success: true, message: 'ok', token: 'token_xyz'),
         );
 
         await tester.pumpWidget(buildTestApp(viewModel: viewModel));

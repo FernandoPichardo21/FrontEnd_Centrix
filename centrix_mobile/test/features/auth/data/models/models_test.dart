@@ -35,8 +35,7 @@ void main() {
   // ── LoginResponse ─────────────────────────────────────────────────────────
   group('LoginResponse –', () {
     group('fromJson() respuesta exitosa', () {
-      test('parsea correctamente una respuesta de login exitoso con token',
-          () {
+      test('parsea correctamente una respuesta de login exitoso con token', () {
         final json = {
           'success': true,
           'message': 'Autenticado correctamente',

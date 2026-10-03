@@ -26,8 +26,7 @@ class ValidationResult {
   String? errorFor(String field) => errors[field];
 
   @override
-  String toString() =>
-      'ValidationResult(isValid: $isValid, errors: $errors)';
+  String toString() => 'ValidationResult(isValid: $isValid, errors: $errors)';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -26,7 +26,8 @@ class AuthRepositoryImpl implements AuthRepository {
         final body = jsonDecode(response.body) as Map<String, dynamic>;
         return LoginResponse(
           success: false,
-          message: body['message'] ?? 'Error de servidor (${response.statusCode})',
+          message:
+              body['message'] ?? 'Error de servidor (${response.statusCode})',
         );
       }
     } on Object catch (e) {
