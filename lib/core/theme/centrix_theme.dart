@@ -8,7 +8,7 @@ abstract final class CentrixColors {
   static const leaf = Color(0xFF235347);
   static const sage = Color(0xFF8EB69B);
   static const mint = Color(0xFFDAF1DE);
-  static const canvas = Color(0xFFF3F8F4);
+  static const canvas = Color(0xFFEDF5F1);
   static const white = Color(0xFFFFFFFF);
 }
 
@@ -35,7 +35,8 @@ abstract final class CentrixTheme {
     final base = ThemeData(useMaterial3: true, colorScheme: scheme);
     final text = base.textTheme;
     return base.copyWith(
-      scaffoldBackgroundColor: CentrixColors.canvas,
+      scaffoldBackgroundColor: Colors.transparent,
+      visualDensity: VisualDensity.standard,
       textTheme: text.copyWith(
         headlineLarge: text.headlineLarge?.copyWith(
           color: CentrixColors.ink,
@@ -60,15 +61,21 @@ abstract final class CentrixTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: CentrixColors.ink,
-        foregroundColor: CentrixColors.mint,
+      appBarTheme: AppBarTheme(
+        backgroundColor: CentrixColors.white.withValues(alpha: .62),
+        foregroundColor: CentrixColors.deep,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
         elevation: 0,
-        titleTextStyle: TextStyle(
-          color: CentrixColors.mint,
-          fontSize: 20,
+        scrolledUnderElevation: 0,
+        toolbarHeight: 72,
+        shape: Border(
+          bottom: BorderSide(color: Colors.white.withValues(alpha: .9)),
+        ),
+        titleTextStyle: const TextStyle(
+          fontFamily: 'Roboto',
+          color: CentrixColors.deep,
+          fontSize: 18,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.2,
         ),
@@ -84,7 +91,7 @@ abstract final class CentrixTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: CentrixColors.white,
+        fillColor: CentrixColors.white.withValues(alpha: .68),
         labelStyle: const TextStyle(color: CentrixColors.forest),
         hintStyle: TextStyle(
           color: CentrixColors.forest.withValues(alpha: 0.66),
@@ -116,19 +123,24 @@ abstract final class CentrixTheme {
         style: FilledButton.styleFrom(
           backgroundColor: CentrixColors.leaf,
           foregroundColor: CentrixColors.white,
-          disabledBackgroundColor: CentrixColors.sage,
+          disabledBackgroundColor: CentrixColors.sage.withValues(alpha: .5),
+          elevation: 0,
           disabledForegroundColor: CentrixColors.forest,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          textStyle: const TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w700,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: CentrixColors.leaf,
-          side: const BorderSide(color: CentrixColors.sage),
+          backgroundColor: CentrixColors.white.withValues(alpha: .38),
+          side: BorderSide(color: CentrixColors.leaf.withValues(alpha: .25)),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -140,6 +152,7 @@ abstract final class CentrixTheme {
         selectedColor: CentrixColors.sage,
         side: BorderSide.none,
         labelStyle: const TextStyle(
+          fontFamily: 'Roboto',
           color: CentrixColors.ink,
           fontWeight: FontWeight.w600,
         ),

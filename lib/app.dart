@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'core/router/app_router.dart';
 import 'core/theme/centrix_theme.dart';
+import 'core/widgets/centrix_glass.dart';
 import 'features/auth/models/auth_model.dart';
 import 'features/auth/viewmodels/auth_view_model.dart';
 import 'features/admin_users/models/user_model.dart';
@@ -59,6 +60,8 @@ class _CentrixAppState extends State<CentrixApp> {
         title: 'Centrix',
         debugShowCheckedModeBanner: false,
         theme: CentrixTheme.light,
+        builder: (context, child) =>
+            CentrixBackdrop(child: child ?? const SizedBox.shrink()),
         routerConfig: _router,
       ),
     );

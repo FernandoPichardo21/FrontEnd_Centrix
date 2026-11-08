@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/centrix_page_header.dart';
+import '../../../core/widgets/centrix_glass.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/create_user_request.dart';
@@ -77,7 +78,7 @@ class _CreateUserViewState extends State<CreateUserView> {
       appBar: AppBar(title: const Text('Crear usuario')),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
+          constraints: const BoxConstraints(maxWidth: 760),
           child: viewModel.createdUserId == null
               ? _form(context, viewModel, auth)
               : _SuccessMessage(
@@ -96,151 +97,159 @@ class _CreateUserViewState extends State<CreateUserView> {
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 48),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const CentrixPageHeader(
-              title: 'Nueva cuenta',
-              description: 'Completa los datos de la persona que tendrá acceso a Centrix.',
-              icon: Icons.person_add_alt_1_rounded,
-              eyebrow: 'ADMINISTRACIÓN',
-            ),
-            const SizedBox(height: 28),
-            TextFormField(
-              key: const Key('user-email'),
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const [AutofillHints.email],
-              decoration: const InputDecoration(
-                labelText: 'Correo electrónico',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                final email = value?.trim() ?? '';
-                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-                  return 'Ingresa un correo válido';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-name'),
-              controller: _nameController,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Nombre',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Ingresa el nombre'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-last-name'),
-              controller: _lastNameController,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Apellido paterno',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Ingresa el apellido paterno'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-second-last-name'),
-              controller: _secondLastNameController,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                labelText: 'Apellido materno (opcional)',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-phone'),
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              autofillHints: const [AutofillHints.telephoneNumber],
-              decoration: const InputDecoration(
-                labelText: 'Teléfono (opcional)',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-password'),
-              controller: _passwordController,
-              obscureText: !_showPassword,
-              autofillHints: const [AutofillHints.newPassword],
-              decoration: InputDecoration(
-                labelText: 'Contraseña',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  tooltip: _showPassword
-                      ? 'Ocultar contraseña'
-                      : 'Mostrar contraseña',
-                  onPressed: () =>
-                      setState(() => _showPassword = !_showPassword),
-                  icon: Icon(
-                    _showPassword
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
+      child: CentrixGlass(
+        child: Padding(
+          padding: const EdgeInsets.all(22),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const CentrixPageHeader(
+                  title: 'Nueva cuenta',
+                  description: 'Completa los datos de la persona que tendrá acceso a Centrix.',
+                  icon: Icons.person_add_alt_1_rounded,
+                  eyebrow: 'ADMINISTRACIÓN',
+                ),
+                const SizedBox(height: 28),
+                TextFormField(
+                  key: const Key('user-email'),
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
+                  decoration: const InputDecoration(
+                    labelText: 'Correo electrónico',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    final email = value?.trim() ?? '';
+                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                        .hasMatch(email)) {
+                      return 'Ingresa un correo válido';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-name'),
+                  controller: _nameController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Ingresa el nombre'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-last-name'),
+                  controller: _lastNameController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Apellido paterno',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Ingresa el apellido paterno'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-second-last-name'),
+                  controller: _secondLastNameController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Apellido materno (opcional)',
+                    border: OutlineInputBorder(),
                   ),
                 ),
-              ),
-              validator: (value) => value == null || value.length < 8
-                  ? 'La contraseña debe tener al menos 8 caracteres'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('user-confirm-password'),
-              controller: _confirmPasswordController,
-              obscureText: !_showPassword,
-              decoration: const InputDecoration(
-                labelText: 'Confirmar contraseña',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) => value != _passwordController.text
-                  ? 'Las contraseñas no coinciden'
-                  : null,
-            ),
-            if (viewModel.errorMessage != null) ...[
-              const SizedBox(height: 16),
-              Text(
-                viewModel.errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              if (viewModel.requiresLogin)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: auth.logout,
-                    child: const Text('Volver a iniciar sesión'),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-phone'),
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  autofillHints: const [AutofillHints.telephoneNumber],
+                  decoration: const InputDecoration(
+                    labelText: 'Teléfono (opcional)',
+                    border: OutlineInputBorder(),
                   ),
                 ),
-            ],
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: viewModel.isSubmitting ? null : _submit,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: viewModel.isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Crear usuario'),
-              ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-password'),
+                  controller: _passwordController,
+                  obscureText: !_showPassword,
+                  autofillHints: const [AutofillHints.newPassword],
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      tooltip: _showPassword
+                          ? 'Ocultar contraseña'
+                          : 'Mostrar contraseña',
+                      onPressed: () =>
+                          setState(() => _showPassword = !_showPassword),
+                      icon: Icon(
+                        _showPassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                    ),
+                  ),
+                  validator: (value) => value == null || value.length < 8
+                      ? 'La contraseña debe tener al menos 8 caracteres'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('user-confirm-password'),
+                  controller: _confirmPasswordController,
+                  obscureText: !_showPassword,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirmar contraseña',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value != _passwordController.text
+                      ? 'Las contraseñas no coinciden'
+                      : null,
+                ),
+                if (viewModel.errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    viewModel.errorMessage!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  if (viewModel.requiresLogin)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: auth.logout,
+                        child: const Text('Volver a iniciar sesión'),
+                      ),
+                    ),
+                ],
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: viewModel.isSubmitting ? null : _submit,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: viewModel.isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Crear usuario'),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

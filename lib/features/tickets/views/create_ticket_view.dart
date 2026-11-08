@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/centrix_page_header.dart';
+import '../../../core/widgets/centrix_glass.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/ticket_priority.dart';
@@ -52,7 +53,7 @@ class _CreateTicketViewState extends State<CreateTicketView> {
       appBar: AppBar(title: const Text('Crear ticket')),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
+          constraints: const BoxConstraints(maxWidth: 760),
           child: _content(context, viewModel, auth, token),
         ),
       ),
@@ -98,118 +99,125 @@ class _CreateTicketViewState extends State<CreateTicketView> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 48),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const CentrixPageHeader(
-              title: 'Nueva incidencia',
-              description: 'Describe el problema y selecciona el departamento que lo atenderá.',
-              icon: Icons.add_task_rounded,
-              eyebrow: 'CREAR TICKET',
-            ),
-            const SizedBox(height: 28),
-            TextFormField(
-              key: const Key('ticket-title'),
-              controller: _titleController,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Ingresa un título'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              key: const Key('ticket-description'),
-              controller: _descriptionController,
-              minLines: 4,
-              maxLines: 7,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                alignLabelWithHint: true,
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Describe la incidencia'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<TicketPriority>(
-              key: const Key('ticket-priority'),
-              initialValue: viewModel.selectedPriority,
-              decoration: const InputDecoration(
-                labelText: 'Prioridad',
-                border: OutlineInputBorder(),
-              ),
-              items: [
-                for (final priority in TicketPriority.values)
-                  DropdownMenuItem(
-                    value: priority,
-                    child: Text(priority.label),
+      child: CentrixGlass(
+        child: Padding(
+          padding: const EdgeInsets.all(22),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const CentrixPageHeader(
+                  title: 'Nueva incidencia',
+                  description: 'Describe el problema y selecciona el departamento que lo atenderá.',
+                  icon: Icons.add_task_rounded,
+                  eyebrow: 'CREAR TICKET',
+                ),
+                const SizedBox(height: 28),
+                TextFormField(
+                  key: const Key('ticket-title'),
+                  controller: _titleController,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
                   ),
-              ],
-              onChanged: viewModel.isSubmitting
-                  ? null
-                  : viewModel.selectPriority,
-              validator: (value) =>
-                  value == null ? 'Selecciona una prioridad' : null,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              key: const Key('ticket-department'),
-              initialValue: viewModel.selectedDepartmentId,
-              decoration: const InputDecoration(
-                labelText: 'Departamento',
-                border: OutlineInputBorder(),
-              ),
-              items: [
-                for (final department in viewModel.departments)
-                  DropdownMenuItem(
-                    value: department.departmentId,
-                    child: Text(department.name),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Ingresa un título'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const Key('ticket-description'),
+                  controller: _descriptionController,
+                  minLines: 4,
+                  maxLines: 7,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción',
+                    alignLabelWithHint: true,
+                    border: OutlineInputBorder(),
                   ),
-              ],
-              onChanged: viewModel.isSubmitting
-                  ? null
-                  : viewModel.selectDepartment,
-              validator: (value) =>
-                  value == null ? 'Selecciona un departamento' : null,
-            ),
-            if (viewModel.errorMessage != null) ...[
-              const SizedBox(height: 16),
-              Text(
-                viewModel.errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              if (viewModel.requiresLogin)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: auth.logout,
-                    child: const Text('Volver a iniciar sesión'),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Describe la incidencia'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TicketPriority>(
+                  key: const Key('ticket-priority'),
+                  initialValue: viewModel.selectedPriority,
+                  decoration: const InputDecoration(
+                    labelText: 'Prioridad',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: [
+                    for (final priority in TicketPriority.values)
+                      DropdownMenuItem(
+                        value: priority,
+                        child: Text(priority.label),
+                      ),
+                  ],
+                  onChanged: viewModel.isSubmitting
+                      ? null
+                      : viewModel.selectPriority,
+                  validator: (value) =>
+                      value == null ? 'Selecciona una prioridad' : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  key: const Key('ticket-department'),
+                  initialValue: viewModel.selectedDepartmentId,
+                  decoration: const InputDecoration(
+                    labelText: 'Departamento',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: [
+                    for (final department in viewModel.departments)
+                      DropdownMenuItem(
+                        value: department.departmentId,
+                        child: Text(department.name),
+                      ),
+                  ],
+                  onChanged: viewModel.isSubmitting
+                      ? null
+                      : viewModel.selectDepartment,
+                  validator: (value) =>
+                      value == null ? 'Selecciona un departamento' : null,
+                ),
+                if (viewModel.errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    viewModel.errorMessage!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  if (viewModel.requiresLogin)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: auth.logout,
+                        child: const Text('Volver a iniciar sesión'),
+                      ),
+                    ),
+                ],
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: viewModel.isSubmitting ? null : _submit,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: viewModel.isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Crear ticket'),
                   ),
                 ),
-            ],
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: viewModel.isSubmitting ? null : _submit,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: viewModel.isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Crear ticket'),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

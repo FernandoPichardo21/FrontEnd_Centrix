@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/centrix_page_header.dart';
+import '../../../core/widgets/centrix_glass.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/ticket.dart';
@@ -197,7 +198,7 @@ class _TicketCard extends StatelessWidget {
         ? 'Crítica'
         : ticket.priority;
 
-    return Card(
+    return CentrixGlass(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: onOpen,

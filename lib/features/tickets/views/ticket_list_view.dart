@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/centrix_theme.dart';
+import '../../../core/widgets/centrix_glass.dart';
 import '../../../core/widgets/centrix_page_header.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
@@ -98,7 +99,7 @@ class TicketListView extends StatelessWidget {
             );
           }
           final ticket = viewModel.tickets[index - 1];
-          return Card(
+          return CentrixGlass(
             key: Key('ticket-card-${ticket.ticketId}'),
             margin: const EdgeInsets.only(bottom: 12),
             clipBehavior: Clip.antiAlias,

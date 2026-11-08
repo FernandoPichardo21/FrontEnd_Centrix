@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/centrix_theme.dart';
+import '../../../core/widgets/centrix_glass.dart';
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/dashboard_module.dart';
 import '../viewmodels/dashboard_view_model.dart';
@@ -21,7 +22,7 @@ class DashboardView extends StatelessWidget {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.layers_rounded, size: 22),
+            Icon(Icons.hub_rounded, size: 24),
             SizedBox(width: 10),
             Text('Centrix'),
           ],
@@ -37,7 +38,7 @@ class DashboardView extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: const BoxConstraints(maxWidth: 1180),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 48),
             children: [
@@ -54,7 +55,10 @@ class DashboardView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text('Áreas de tu cuenta', style: theme.textTheme.titleLarge),
+                  Text(
+                    'Tu centro de operaciones',
+                    style: theme.textTheme.titleLarge,
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
@@ -71,8 +75,8 @@ class DashboardView extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: dashboard.modules.length,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 360,
-                  mainAxisExtent: 190,
+                  maxCrossAxisExtent: 390,
+                  mainAxisExtent: 220,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
@@ -94,77 +98,121 @@ class DashboardView extends StatelessWidget {
 
 class _WelcomePanel extends StatelessWidget {
   const _WelcomePanel({required this.dashboard});
-
   final DashboardViewModel dashboard;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(26),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [CentrixColors.ink, CentrixColors.deep, CentrixColors.leaf],
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'TU ESPACIO DE TRABAJO',
-            style: TextStyle(
-              color: CentrixColors.sage,
-              fontWeight: FontWeight.w800,
-              fontSize: 11,
-              letterSpacing: 2,
+  Widget build(BuildContext context) => CentrixGlass(
+    dark: true,
+    radius: 32,
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth > 780;
+        return Stack(
+          children: [
+            const Positioned(
+              right: -100,
+              top: -160,
+              child: Opacity(opacity: .12, child: CentrixOrbit(size: 480)),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Hola, ${dashboard.displayName}',
-            style: Theme.of(context).textTheme.headlineMedium
-                ?.copyWith(color: CentrixColors.white),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Bienvenido a Centrix. Da seguimiento a tu trabajo desde un solo lugar.',
-            style: TextStyle(color: CentrixColors.mint, height: 1.45),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: CentrixColors.white.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: CentrixColors.mint.withValues(alpha: 0.18),
+            Padding(
+              padding: EdgeInsets.all(wide ? 36 : 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: const BoxDecoration(
+                                color: CentrixColors.sage,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 9),
+                            const Text(
+                              'TU ESPACIO DE TRABAJO',
+                              style: TextStyle(
+                                color: CentrixColors.sage,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 2.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Hola, ${dashboard.displayName}',
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                color: CentrixColors.white,
+                                fontSize: wide ? 38 : 28,
+                                letterSpacing: -1.3,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Todo conectado. Todo en movimiento.',
+                          style: TextStyle(
+                            color: CentrixColors.mint.withValues(alpha: .85),
+                            height: 1.5,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 26),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: .08),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: .14),
+                            ),
+                          ),
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            runSpacing: 8,
+                            children: [
+                              const Icon(
+                                Icons.fingerprint_rounded,
+                                color: CentrixColors.sage,
+                                size: 22,
+                              ),
+                              Text(
+                                dashboard.user.email,
+                                style: const TextStyle(
+                                  color: CentrixColors.mint,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              for (final role in dashboard.roleLabels)
+                                Chip(label: Text(role)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (wide) ...[
+                    const SizedBox(width: 28),
+                    const CentrixOrbit(size: 220),
+                  ],
+                ],
               ),
             ),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 12,
-              runSpacing: 10,
-              children: [
-                const Icon(
-                  Icons.account_circle_outlined,
-                  color: CentrixColors.mint,
-                ),
-                Text(
-                  dashboard.user.email,
-                  style: const TextStyle(color: CentrixColors.white),
-                ),
-                for (final role in dashboard.roleLabels)
-                  Chip(label: Text(role)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        );
+      },
+    ),
+  );
 }
 
 class _ModuleCard extends StatelessWidget {
@@ -215,12 +263,13 @@ class _ModuleCard extends StatelessWidget {
       DashboardModule.createUser => '/admin/users/new',
     };
 
-    return Card(
+    return CentrixGlass(
+      interactive: true,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => context.push(target),
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(22),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -230,10 +279,19 @@ class _ModuleCard extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: CentrixColors.mint,
-                      borderRadius: BorderRadius.circular(14),
+                      gradient: const LinearGradient(
+                        colors: [CentrixColors.deep, CentrixColors.leaf],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: CentrixColors.leaf.withValues(alpha: .18),
+                          blurRadius: 16,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    child: Icon(info.icon, color: CentrixColors.leaf),
+                    child: Icon(info.icon, color: CentrixColors.mint),
                   ),
                   const Spacer(),
                   const Icon(
@@ -243,7 +301,11 @@ class _ModuleCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Text(info.title, style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                info.title,
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontSize: 18, letterSpacing: -.4),
+              ),
               const SizedBox(height: 6),
               Text(
                 info.description,

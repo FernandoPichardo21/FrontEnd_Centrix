@@ -233,9 +233,13 @@ void main() {
       find.byKey(const Key('ticket-description')),
       'No enciende',
     );
+    await tester.ensureVisible(find.byKey(const Key('ticket-priority')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('ticket-priority')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Alta').last);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('ticket-department')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('ticket-department')));
     await tester.pumpAndSettle();

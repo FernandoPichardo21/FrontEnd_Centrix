@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/centrix_theme.dart';
+import '../../../core/widgets/centrix_glass.dart';
 import '../viewmodels/auth_view_model.dart';
 
 class LoginView extends StatefulWidget {
@@ -37,30 +38,24 @@ class _LoginViewState extends State<LoginView> {
     final auth = context.watch<AuthViewModel>();
     return Scaffold(
       backgroundColor: CentrixColors.ink,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [CentrixColors.ink, CentrixColors.deep, CentrixColors.leaf],
-          ),
-        ),
+      body: CentrixBackdrop(
+        dark: true,
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 760;
+              final wide = constraints.maxWidth >= 1000;
               return Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: wide ? 1040 : 480),
+                    constraints: BoxConstraints(maxWidth: wide ? 1120 : 480),
                     child: wide
                         ? Row(
                             children: [
                               const Expanded(child: _BrandIntro(wide: true)),
                               const SizedBox(width: 32),
                               SizedBox(
-                                width: 400,
+                                width: 430,
                                 child: _LoginCard(
                                   formKey: _formKey,
                                   emailController: _emailController,
@@ -105,60 +100,99 @@ class _LoginViewState extends State<LoginView> {
 
 class _BrandIntro extends StatelessWidget {
   const _BrandIntro({required this.wide});
-
   final bool wide;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: wide
-          ? CrossAxisAlignment.start
-          : CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 66,
-          height: 66,
-          decoration: BoxDecoration(
-            color: CentrixColors.mint,
-            borderRadius: BorderRadius.circular(20),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: wide
+        ? CrossAxisAlignment.start
+        : CrossAxisAlignment.center,
+    children: [
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(11),
+            decoration: BoxDecoration(
+              color: CentrixColors.mint.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: CentrixColors.mint.withValues(alpha: .28),
+              ),
+            ),
+            child: const Icon(
+              Icons.hub_rounded,
+              color: CentrixColors.mint,
+              size: 25,
+            ),
           ),
-          child: const Icon(
-            Icons.layers_rounded,
-            size: 34,
-            color: CentrixColors.ink,
-          ),
-        ),
-        const SizedBox(height: 18),
-        Text(
-          'Centrix',
-          style: Theme.of(context).textTheme.headlineLarge
-              ?.copyWith(color: CentrixColors.white, fontSize: wide ? 52 : 36),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          wide
-              ? 'Todo tu trabajo, en un solo lugar.'
-              : 'Gestiona tus tickets con claridad.',
-          textAlign: wide ? TextAlign.left : TextAlign.center,
-          style: const TextStyle(
-            color: CentrixColors.mint,
-            fontSize: 17,
-            height: 1.45,
-          ),
-        ),
-        if (wide) ...[
-          const SizedBox(height: 28),
+          const SizedBox(width: 13),
           const Text(
-            'Incidencias · Departamentos · Seguimiento',
+            'Centrix',
             style: TextStyle(
-              color: CentrixColors.sage,
-              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Text(
+            'WORKSPACE',
+            style: TextStyle(
+              color: CentrixColors.sage.withValues(alpha: .8),
+              fontSize: 9,
+              letterSpacing: 2.2,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
+      ),
+      SizedBox(height: wide ? 46 : 24),
+      Text(
+        wide ? 'Cada incidencia.\nBajo control.' : 'Tu trabajo, conectado.',
+        textAlign: wide ? TextAlign.left : TextAlign.center,
+        style: TextStyle(
+          color: CentrixColors.mint,
+          fontSize: wide ? 58 : 30,
+          height: 1.08,
+          fontWeight: FontWeight.w800,
+          letterSpacing: wide ? -2.8 : -1,
+        ),
+      ),
+      const SizedBox(height: 20),
+      Text(
+        'Conecta a tu equipo. Organiza tus tickets.\nHaz que las cosas avancen.',
+        textAlign: wide ? TextAlign.left : TextAlign.center,
+        style: TextStyle(
+          color: CentrixColors.mint.withValues(alpha: .7),
+          height: 1.6,
+          fontSize: 15,
+        ),
+      ),
+      if (wide) ...[
+        const SizedBox(height: 12),
+        const SizedBox(
+          height: 220,
+          child: Center(child: CentrixOrbit(size: 220)),
+        ),
+        Row(
+          children: [
+            Container(width: 22, height: 1, color: CentrixColors.sage),
+            const SizedBox(width: 10),
+            const Text(
+              'UN ESPACIO. TODO TU EQUIPO.',
+              style: TextStyle(
+                color: CentrixColors.sage,
+                fontSize: 9,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
       ],
-    );
-  }
+    ],
+  );
 }
 
 class _LoginCard extends StatelessWidget {
@@ -182,7 +216,7 @@ class _LoginCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return CentrixGlass(
       child: Padding(
         padding: const EdgeInsets.all(30),
         child: Form(

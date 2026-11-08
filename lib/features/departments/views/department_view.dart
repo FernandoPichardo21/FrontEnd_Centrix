@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/centrix_theme.dart';
+import '../../../core/widgets/centrix_glass.dart';
 import '../../../core/widgets/centrix_page_header.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
@@ -133,7 +134,7 @@ class _DepartmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final description = department.description?.trim();
-    return Card(
+    return CentrixGlass(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

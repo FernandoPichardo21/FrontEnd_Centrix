@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/centrix_theme.dart';
+import '../../../core/widgets/centrix_glass.dart';
 import '../../../core/widgets/centrix_page_header.dart';
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/ticket_status.dart';
@@ -60,7 +61,7 @@ class TicketDetailView extends StatelessWidget {
                       eyebrow: 'DETALLE DEL TICKET',
                     ),
                     const SizedBox(height: 18),
-                    Card(
+                    CentrixGlass(
                       child: Padding(
                         padding: const EdgeInsets.all(22),
                         child: Column(
@@ -118,7 +119,7 @@ class TicketDetailView extends StatelessWidget {
                     _EvidenceCard(viewModel: viewModel, token: token),
                     if (viewModel.canManage) ...[
                       const SizedBox(height: 18),
-                      Card(
+                      CentrixGlass(
                         child: Padding(
                           padding: const EdgeInsets.all(22),
                           child: Column(
@@ -271,7 +272,7 @@ class _EvidenceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selected = viewModel.selectedEvidence;
-    return Card(
+    return CentrixGlass(
       child: Padding(
         padding: const EdgeInsets.all(22),
         child: Column(
