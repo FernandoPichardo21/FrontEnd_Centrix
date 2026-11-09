@@ -79,9 +79,11 @@ class HeaderPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     // Just drawing some simple shapes to represent the pattern
-    canvas.drawCircle(Offset(size.width * 0.1, size.height * 0.2), 30, patternPaint);
-    canvas.drawRect(Rect.fromLTWH(size.width * 0.7, size.height * 0.1, 50, 50), patternPaint);
-    
+    canvas.drawCircle(
+        Offset(size.width * 0.1, size.height * 0.2), 30, patternPaint);
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.7, size.height * 0.1, 50, 50),
+        patternPaint);
+
     final trianglePath = Path()
       ..moveTo(size.width * 0.5, size.height * 0.5)
       ..lineTo(size.width * 0.6, size.height * 0.7)

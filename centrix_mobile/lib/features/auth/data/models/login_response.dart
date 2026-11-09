@@ -27,4 +27,9 @@ class LoginResponse {
       token: data is Map<String, dynamic> ? data['token'] as String? : null,
     );
   }
+
+  final bool success;
+  final String message;
+  final UserModel? user;
+  final String? token;
 }

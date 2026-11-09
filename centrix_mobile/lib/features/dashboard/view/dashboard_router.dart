@@ -10,7 +10,7 @@ import 'unsupported_role_screen.dart';
 
 /// Selecciona el dashboard correspondiente al rol autenticado.
 class DashboardRouter extends StatelessWidget {
-  const DashboardRouter({super.key, required this.user});
+  const DashboardRouter({required this.user, super.key});
 
   final UserModel user;
 

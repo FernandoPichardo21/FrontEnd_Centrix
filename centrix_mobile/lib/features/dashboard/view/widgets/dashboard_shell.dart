@@ -28,7 +28,6 @@ class DashboardAction {
 /// Estructura visual compartida por todos los dashboards de la aplicación.
 class DashboardShell extends StatelessWidget {
   const DashboardShell({
-    super.key,
     required this.userName,
     required this.userEmail,
     required this.roleLabel,
