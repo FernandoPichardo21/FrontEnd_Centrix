@@ -1,7 +1,12 @@
 import 'user_model.dart';
 
 class LoginResponse {
-  LoginResponse({
+  final bool success;
+  final String message;
+  final UserModel? user;
+  final String? token;
+
+  const LoginResponse({
     required this.success,
     required this.message,
     this.user,

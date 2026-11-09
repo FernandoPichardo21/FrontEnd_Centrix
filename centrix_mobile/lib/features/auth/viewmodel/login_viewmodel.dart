@@ -54,4 +54,13 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
     return _isSuccess;
   }
+
+  void logout() {
+    _isLoading = false;
+    _errorMessage = null;
+    _isSuccess = false;
+    _authenticatedUser = null;
+    _token = null;
+    notifyListeners();
+  }
 }

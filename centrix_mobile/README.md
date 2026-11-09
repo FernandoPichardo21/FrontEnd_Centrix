@@ -1,17 +1,22 @@
-# centrix_mobile
+# Centrix Mobile
 
-A new Flutter project.
+Frontend de Centrix desarrollado con Flutter. Incluye autenticación mediante el backend, redirección por roles, dashboards empresariales y administración de usuarios.
 
-## Getting Started
+## Ejecución
 
-This project is a starting point for a Flutter application.
+```powershell
+flutter pub get
+flutter run -d chrome
+```
 
-A few resources to get you started if this is your first Flutter project:
+Para ejecutar en un emulador Android:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```powershell
+flutter run -d emulator-5554
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+El backend debe estar disponible en el puerto `3000`. La aplicación utiliza automáticamente `localhost` en web y `10.0.2.2` en el emulador Android.
+
+## Documentación
+
+La explicación completa de la arquitectura, los flujos, SOLID y el guion sugerido para la exposición se encuentra en [docs/GUIA_FRONTEND.md](docs/GUIA_FRONTEND.md).
