@@ -44,10 +44,14 @@ los ViewModels administran los estados y las vistas muestran los datos.
 
 ## Evidencias de tickets
 
-Después de crear un ticket, pulsa **Ver ticket y adjuntar evidencia**. En el
-detalle puedes seleccionar y adjuntar JPEG, PNG o MP4 de hasta 5 MB. Las imágenes
-se muestran en la lista y los archivos se abren mediante URLs temporales. El botón
-de actualizar solicita enlaces nuevos.
+En **Crear ticket**, selecciona opcionalmente un JPEG, PNG o MP4 de hasta 5 MB.
+Al enviar el formulario, el ViewModel crea el ticket y adjunta el archivo usando
+el ID recibido. Si falla la subida, la misma pantalla permite reintentar únicamente
+la evidencia sin volver a crear el ticket, o continuar sin ella.
+
+El detalle de tickets permite solamente consultar y abrir las evidencias. Las
+imágenes se muestran en la lista y los archivos se abren mediante URLs temporales.
+El botón de actualizar solicita enlaces nuevos.
 
 Esta función necesita que el backend exponga:
 

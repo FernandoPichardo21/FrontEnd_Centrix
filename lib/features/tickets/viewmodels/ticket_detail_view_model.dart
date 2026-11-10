@@ -6,7 +6,6 @@ import '../models/ticket_assignee.dart';
 import '../models/ticket_model.dart';
 import '../models/ticket_status.dart';
 import '../models/ticket_evidence.dart';
-import '../models/ticket_evidence_file.dart';
 
 class TicketDetailViewModel extends ChangeNotifier {
   TicketDetailViewModel(this._model, this.ticketId, this.canManage);
@@ -17,11 +16,8 @@ class TicketDetailViewModel extends ChangeNotifier {
   Ticket? _ticket;
   List<TicketAssignee> _assignees = const [];
   List<TicketEvidence> _evidences = const [];
-  TicketEvidenceFile? _selectedEvidence;
   String? _evidenceError;
-  String? _evidenceMessage;
   bool _isLoadingEvidences = false;
-  bool _isUploadingEvidence = false;
   String? _selectedAssigneeId;
   TicketStatus? _selectedStatus;
   String? _errorMessage;
@@ -35,11 +31,8 @@ class TicketDetailViewModel extends ChangeNotifier {
   Ticket? get ticket => _ticket;
   List<TicketAssignee> get assignees => _assignees;
   List<TicketEvidence> get evidences => _evidences;
-  TicketEvidenceFile? get selectedEvidence => _selectedEvidence;
   String? get evidenceError => _evidenceError;
-  String? get evidenceMessage => _evidenceMessage;
   bool get isLoadingEvidences => _isLoadingEvidences;
-  bool get isUploadingEvidence => _isUploadingEvidence;
   String? get selectedAssigneeId => _selectedAssigneeId;
   TicketStatus? get selectedStatus => _selectedStatus;
   String? get errorMessage => _errorMessage;
@@ -95,58 +88,6 @@ class TicketDetailViewModel extends ChangeNotifier {
       _evidenceError = 'No se pudieron cargar las evidencias.';
     } finally {
       _isLoadingEvidences = false;
-      _notify();
-    }
-  }
-
-  void selectEvidence(TicketEvidenceFile file) {
-    if (_disposed || _isUploadingEvidence) return;
-    if (file.bytes.isEmpty || file.bytes.length > 5 * 1024 * 1024) {
-      _evidenceError = 'Selecciona un archivo de hasta 5 MB.';
-      _selectedEvidence = null;
-    } else if (![
-      'image/jpeg',
-      'image/png',
-      'video/mp4',
-    ].contains(file.mimeType)) {
-      _evidenceError = 'Solo se aceptan imágenes JPEG, PNG o videos MP4.';
-      _selectedEvidence = null;
-    } else {
-      _selectedEvidence = file;
-      _evidenceError = null;
-      _evidenceMessage = null;
-    }
-    _notify();
-  }
-
-  void setEvidenceSelectionError(String message) {
-    if (_disposed) return;
-    _evidenceError = message;
-    _notify();
-  }
-
-  Future<void> uploadEvidence(String token) async {
-    final file = _selectedEvidence;
-    if (_disposed || _ticket == null || _isUploadingEvidence || file == null) {
-      return;
-    }
-    _isUploadingEvidence = true;
-    _evidenceError = null;
-    _evidenceMessage = null;
-    _notify();
-    try {
-      final evidence = await _model.attachEvidence(ticketId, file, token);
-      _evidences = [evidence, ..._evidences];
-      _selectedEvidence = null;
-      _evidenceMessage = 'Evidencia adjuntada correctamente.';
-      _requiresLogin = false;
-    } on ApiException catch (error) {
-      _evidenceError = error.message;
-      _requiresLogin = error.statusCode == 401;
-    } catch (_) {
-      _evidenceError = 'No se pudo adjuntar la evidencia.';
-    } finally {
-      _isUploadingEvidence = false;
       _notify();
     }
   }
