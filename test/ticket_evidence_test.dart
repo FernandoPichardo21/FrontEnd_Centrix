@@ -69,8 +69,9 @@ class FakeEvidenceTicketModel extends TicketModel {
     uploads++;
     uploadedTicketIds.add(ticketId);
     operations.add('upload');
-    if (failUpload)
+    if (failUpload) {
       throw const ApiException('Storage no disponible', statusCode: 500);
+    }
     return sampleEvidence;
   }
 }

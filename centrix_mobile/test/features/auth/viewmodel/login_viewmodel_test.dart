@@ -125,7 +125,7 @@ void main() {
 
       setUp(() {
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(
+          (_) async => const LoginResponse(
             success: false,
             message: errorMsg,
           ),
@@ -145,7 +145,7 @@ void main() {
     group('login() con error de conexión', () {
       setUp(() {
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(
+          (_) async => const LoginResponse(
             success: false,
             message: 'Error de conexión: SocketException',
           ),
