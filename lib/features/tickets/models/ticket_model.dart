@@ -48,7 +48,7 @@ class TicketModel {
   ) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
-        '/api/tickets/department/${Uri.encodeComponent(departmentId)}',
+        '/api/tickets/department?department_id=${Uri.encodeComponent(departmentId)}',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       final body = response.data;
@@ -68,7 +68,7 @@ class TicketModel {
   }
 
   Future<List<Ticket>> getMyTickets(String token) =>
-      _getTickets('/api/tickets/my-tickets', token);
+      _getTickets('/api/tickets/mine', token);
 
   Future<List<Ticket>> getPendingTickets(String token) =>
       _getTickets('/api/tickets/pending', token);
