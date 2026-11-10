@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:centrix/app.dart';
 import 'package:centrix/features/admin_users/models/create_user_request.dart';
 import 'package:centrix/features/admin_users/models/created_user.dart';
@@ -14,6 +16,9 @@ import 'package:centrix/features/tickets/models/ticket_assignee.dart';
 import 'package:centrix/features/tickets/models/ticket_model.dart';
 import 'package:centrix/features/tickets/models/ticket_status.dart';
 import 'package:centrix/features/tickets/models/ticket_evidence.dart';
+import 'package:centrix/features/tickets/models/ticket_evidence_file.dart';
+import 'package:centrix/features/tickets/viewmodels/create_ticket_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -61,6 +66,8 @@ class FakeTicketModel extends TicketModel {
   TicketStatus? savedStatus;
   String? currentAssigneeId;
   String currentStatus = 'Abierto';
+  String? uploadedEvidenceTicketId;
+  List<TicketEvidence> evidenceRecords = const [];
 
   Ticket get currentTicket => Ticket(
     ticketId: 'ticket-2',
@@ -88,7 +95,26 @@ class FakeTicketModel extends TicketModel {
   Future<List<TicketEvidence>> getEvidences(
     String ticketId,
     String token,
-  ) async => const [];
+  ) async => evidenceRecords;
+
+  @override
+  Future<TicketEvidence> attachEvidence(
+    String ticketId,
+    TicketEvidenceFile file,
+    String token,
+  ) async {
+    uploadedEvidenceTicketId = ticketId;
+    final evidence = TicketEvidence(
+      evidenceId: 'evidence-1',
+      ticketId: ticketId,
+      mimeType: file.mimeType,
+      size: file.bytes.length,
+      createdAt: null,
+      signedUrl: 'https://example.test/evidence',
+    );
+    evidenceRecords = [evidence];
+    return evidence;
+  }
 
   @override
   Future<List<TicketAssignee>> getAssignees(String token) async => const [
@@ -256,6 +282,77 @@ void main() {
     expect(ticketModel.receivedRequest?.departmentId, 'dep-1');
     expect(ticketModel.receivedToken, 'test-token');
   });
+
+  testWidgets(
+    'adjunta al crear y el detalle solo permite consultar evidencia',
+    (tester) async {
+      final ticketModel = FakeTicketModel();
+      await tester.pumpWidget(
+        CentrixApp(
+          authModel: FakeAuthModel(),
+          departmentModel: FakeDepartmentModel(),
+          ticketModel: ticketModel,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await signIn(tester);
+      await openModule(tester, 'createTicket');
+      await tester.enterText(
+        find.byKey(const Key('ticket-title')),
+        'Equipo dañado',
+      );
+      await tester.enterText(
+        find.byKey(const Key('ticket-description')),
+        'No enciende',
+      );
+      await tester.ensureVisible(find.byKey(const Key('ticket-priority')));
+      await tester.tap(find.byKey(const Key('ticket-priority')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Alta').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('ticket-department')));
+      await tester.tap(find.byKey(const Key('ticket-department')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Soporte TI').last);
+      await tester.pumpAndSettle();
+      final selection = find.byKey(const Key('select-ticket-evidence'));
+      await tester.ensureVisible(selection);
+      tester
+          .element(selection)
+          .read<CreateTicketViewModel>()
+          .selectEvidence(
+            TicketEvidenceFile(
+              name: 'evidencia.mp4',
+              bytes: Uint8List.fromList([1, 2, 3]),
+              mimeType: 'video/mp4',
+            ),
+          );
+      await tester.pumpAndSettle();
+      expect(find.text('evidencia.mp4'), findsOneWidget);
+      final createButton = find.widgetWithText(FilledButton, 'Crear ticket');
+      await tester.ensureVisible(createButton);
+      await tester.tap(createButton);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('La incidencia y su evidencia se guardaron correctamente.'),
+        findsOneWidget,
+      );
+      expect(ticketModel.uploadedEvidenceTicketId, 'ticket-1');
+      final details = find.widgetWithText(FilledButton, 'Ver ticket');
+      await tester.ensureVisible(details);
+      await tester.tap(details);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('select-ticket-evidence')), findsNothing);
+      expect(find.byKey(const Key('upload-ticket-evidence')), findsNothing);
+      await tester.scrollUntilVisible(
+        find.text('Video MP4'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Abrir evidencia'), findsOneWidget);
+    },
+  );
 
   testWidgets('un gerente ve los tickets de un departamento', (tester) async {
     final ticketModel = FakeTicketModel();

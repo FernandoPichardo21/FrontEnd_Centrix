@@ -169,7 +169,8 @@ void main() {
       testWidgets('muestra error cuando login falla', (tester) async {
         const errorMessage = 'Credenciales inválidas';
         when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(success: false, message: errorMessage),
+          (_) async =>
+              const LoginResponse(success: false, message: errorMessage),
         );
 
         await tester.pumpWidget(buildTestApp(viewModel: viewModel));

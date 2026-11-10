@@ -28,6 +28,7 @@ class DashboardAction {
 /// Estructura visual compartida por todos los dashboards de la aplicación.
 class DashboardShell extends StatelessWidget {
   const DashboardShell({
+    super.key,
     required this.userName,
     required this.userEmail,
     required this.roleLabel,
@@ -341,7 +342,7 @@ class _WelcomeBanner extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF36B6A7).withValues(alpha: 0.18),
+                        color: const Color(0xFF36B6A7).withAlpha(46),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(color: const Color(0x6636B6A7)),
                       ),
@@ -397,7 +398,7 @@ class _WelcomeBanner extends StatelessWidget {
                   width: 118,
                   height: 118,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: Colors.white.withAlpha(20),
                     borderRadius: BorderRadius.circular(28),
                     border: Border.all(color: const Color(0x26FFFFFF)),
                   ),
@@ -516,7 +517,7 @@ class _ActionCard extends StatelessWidget {
                     height: 50,
                     decoration: BoxDecoration(
                       color: action.enabled
-                          ? accent.withValues(alpha: 0.10)
+                          ? accent.withAlpha(26)
                           : const Color(0xFFE9EEF4),
                       borderRadius: BorderRadius.circular(14),
                     ),

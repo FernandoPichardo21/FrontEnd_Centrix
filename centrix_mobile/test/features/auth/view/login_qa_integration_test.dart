@@ -101,7 +101,7 @@ void main() {
 
       // Configuramos el mock para simular que Supabase/Backend rechaza el login
       when(mockRepository.login(any)).thenAnswer(
-        (_) async => LoginResponse(
+        (_) async => const LoginResponse(
           success: false,
           message: errorMessage,
         ),
