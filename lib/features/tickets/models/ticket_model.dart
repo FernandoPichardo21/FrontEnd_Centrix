@@ -167,6 +167,7 @@ class TicketModel {
           )
           .toList(growable: false);
     } on DioException catch (error) {
+      if (error.response?.statusCode == 404) return const [];
       throw _apiException(error, 'No se pudieron cargar las evidencias.');
     } on TypeError {
       throw const ApiException('Respuesta inesperada del servidor.');
