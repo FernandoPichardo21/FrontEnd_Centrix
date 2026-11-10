@@ -123,7 +123,7 @@ void main() {
               '/api/tickets/mine' ||
               '/api/tickets/pending' => [ticketData],
               '/api/tickets/ticket-2' => ticketData,
-              '/api/tickets/assignees' => [
+              '/api/users/solvers' => [
                 {
                   'id': 'user-2',
                   'fullName': 'Juan Pérez',
@@ -167,8 +167,8 @@ void main() {
         'GET /api/tickets/mine',
         'GET /api/tickets/pending',
         'GET /api/tickets/ticket-2',
-        'GET /api/tickets/assignees',
-        'POST /api/tickets/ticket-2/assign',
+        'GET /api/users/solvers',
+        'PATCH /api/tickets/ticket-2/assign',
         'PATCH /api/tickets/ticket-2/status',
       ]);
       expect(
@@ -177,7 +177,7 @@ void main() {
         ),
         isTrue,
       );
-      expect(requests[4].data, {'assigneeId': 'user-2'});
+      expect(requests[4].data, {'assigned_to': 'user-2'});
       expect(requests[5].data, {'status': 'En progreso'});
     },
   );
