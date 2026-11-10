@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522376886352",
+    "project_id": "centrix-41c57",
+    "storage_bucket": "centrix-41c57.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522376886352:android:8463076f89b19e1304f955",
+        "android_client_info": {
+          "package_name": "com.example.centrix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8aj67qNSjSDkQQxMEK3tgBFHXzPxB8Wk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
