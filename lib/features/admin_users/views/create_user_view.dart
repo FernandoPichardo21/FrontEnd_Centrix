@@ -7,6 +7,7 @@ import '../../../core/widgets/centrix_glass.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/create_user_request.dart';
+import '../models/user_role_option.dart';
 import '../viewmodels/create_user_view_model.dart';
 
 class CreateUserView extends StatefulWidget {
@@ -41,6 +42,7 @@ class _CreateUserViewState extends State<CreateUserView> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    final viewModel = context.read<CreateUserViewModel>();
     final created = await context.read<CreateUserViewModel>().submit(
       CreateUserRequest(
         email: _emailController.text,
@@ -49,6 +51,8 @@ class _CreateUserViewState extends State<CreateUserView> {
         apellidoPat: _lastNameController.text,
         apellidoMat: _secondLastNameController.text,
         telefono: _phoneController.text,
+        role: viewModel.selectedRole!.role,
+        departmentId: viewModel.selectedDepartmentId,
       ),
       context.read<AuthViewModel>().session!.token,
     );
@@ -83,6 +87,8 @@ class _CreateUserViewState extends State<CreateUserView> {
               ? _form(context, viewModel, auth)
               : _SuccessMessage(
                   userId: viewModel.createdUserId!,
+                  roleLabel: viewModel.selectedRole?.label ?? '',
+                  departmentName: viewModel.selectedDepartmentName,
                   onCreateAnother: _createAnother,
                 ),
         ),
@@ -112,6 +118,84 @@ class _CreateUserViewState extends State<CreateUserView> {
                   eyebrow: 'ADMINISTRACIÓN',
                 ),
                 const SizedBox(height: 28),
+                Text(
+                  'Acceso y departamento',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'El rol define los permisos de la cuenta. Asigna el departamento en el que trabajará.',
+                ),
+                const SizedBox(height: 16),
+                if (viewModel.isLoadingOptions) const LinearProgressIndicator(),
+                if (viewModel.optionsError != null) ...[
+                  Text(
+                    viewModel.optionsError!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => viewModel.loadOptions(auth.session!.token),
+                    child: const Text('Reintentar catálogos'),
+                  ),
+                ],
+                DropdownButtonFormField<UserRoleOption>(
+                  key: ValueKey('user-role-${viewModel.selectedRole?.role}'),
+                  isExpanded: true,
+                  initialValue: viewModel.selectedRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Rol',
+                    prefixIcon: Icon(Icons.admin_panel_settings_outlined),
+                  ),
+                  items: [
+                    for (final role in viewModel.roles)
+                      DropdownMenuItem(value: role, child: Text(role.label)),
+                  ],
+                  onChanged:
+                      viewModel.isSubmitting || viewModel.isLoadingOptions
+                      ? null
+                      : viewModel.selectRole,
+                  validator: (value) =>
+                      value == null ? 'Selecciona el rol de la cuenta' : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  key: ValueKey(
+                    'user-department-${viewModel.selectedDepartmentId}',
+                  ),
+                  isExpanded: true,
+                  initialValue: viewModel.selectedDepartmentId,
+                  decoration: InputDecoration(
+                    labelText: viewModel.requiresDepartment
+                        ? 'Departamento'
+                        : 'Departamento (opcional)',
+                    prefixIcon: const Icon(Icons.apartment_outlined),
+                  ),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('Sin departamento'),
+                    ),
+                    for (final department in viewModel.departments)
+                      DropdownMenuItem(
+                        value: department.departmentId,
+                        child: Text(
+                          department.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                  onChanged:
+                      viewModel.isSubmitting || viewModel.isLoadingOptions
+                      ? null
+                      : viewModel.selectDepartment,
+                  validator: (value) =>
+                      viewModel.requiresDepartment && value == null
+                      ? 'Selecciona el departamento'
+                      : null,
+                ),
+                const Divider(height: 36),
                 TextFormField(
                   key: const Key('user-email'),
                   controller: _emailController,
@@ -235,7 +319,12 @@ class _CreateUserViewState extends State<CreateUserView> {
                 ],
                 const SizedBox(height: 24),
                 FilledButton(
-                  onPressed: viewModel.isSubmitting ? null : _submit,
+                  onPressed:
+                      viewModel.isSubmitting ||
+                          viewModel.isLoadingOptions ||
+                          viewModel.optionsError != null
+                      ? null
+                      : _submit,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: viewModel.isSubmitting
@@ -257,9 +346,16 @@ class _CreateUserViewState extends State<CreateUserView> {
 }
 
 class _SuccessMessage extends StatelessWidget {
-  const _SuccessMessage({required this.userId, required this.onCreateAnother});
+  const _SuccessMessage({
+    required this.userId,
+    required this.roleLabel,
+    this.departmentName,
+    required this.onCreateAnother,
+  });
 
   final String userId;
+  final String roleLabel;
+  final String? departmentName;
   final VoidCallback onCreateAnother;
 
   @override
@@ -282,6 +378,9 @@ class _SuccessMessage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text('La cuenta se registró correctamente.'),
+            const SizedBox(height: 10),
+            Text('Rol: $roleLabel'),
+            Text('Departamento: ${departmentName ?? 'Sin departamento'}'),
             const SizedBox(height: 12),
             SelectableText(
               'ID del usuario: $userId',

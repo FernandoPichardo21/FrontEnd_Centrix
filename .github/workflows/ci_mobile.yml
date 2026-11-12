@@ -2,7 +2,7 @@ name: CI – Centrix Mobile
 
 on:
   push:
-    branches: [main, develop, 'feature/**', 'hotfix/**']
+    branches: [main, sprint, develop, 'feature/**', 'hotfix/**']
   pull_request:
     branches: [main, develop]
 
@@ -12,8 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.24.0'   # Pin para builds reproducibles
-  WORKING_DIR: centrix_mobile  # Sub-package Flutter real del repo
+  # Dart 3.13.3 y Material incluido en Flutter, compatibles con esta aplicación.
+  # Actualizar de forma explícita después de validar una migración de SDK.
+  FLUTTER_VERSION: '3.47.3'
+  WORKING_DIR: .  # La aplicación Flutter actual está en la raíz
 
 jobs:
   # ──────────────────────────────────────────────
@@ -90,14 +92,6 @@ jobs:
           name: coverage-report
           path: ${{ env.WORKING_DIR }}/coverage/lcov.info
           retention-days: 14
-
-      # Comentario de cobertura en el PR (opcional pero útil)
-      - name: Comentar cobertura en PR
-        if: github.event_name == 'pull_request'
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          lcov-file: ${{ env.WORKING_DIR }}/coverage/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   # ──────────────────────────────────────────────
   # JOB 3 ▸ RESUMEN FINAL

@@ -48,7 +48,7 @@ class TicketModel {
   ) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
-        '/api/tickets/department/${Uri.encodeComponent(departmentId)}',
+        '/api/tickets/department?department_id=${Uri.encodeComponent(departmentId)}',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       final body = response.data;
@@ -68,7 +68,7 @@ class TicketModel {
   }
 
   Future<List<Ticket>> getMyTickets(String token) =>
-      _getTickets('/api/tickets/my-tickets', token);
+      _getTickets('/api/tickets/mine', token);
 
   Future<List<Ticket>> getPendingTickets(String token) =>
       _getTickets('/api/tickets/pending', token);
@@ -91,10 +91,16 @@ class TicketModel {
     }
   }
 
-  Future<List<TicketAssignee>> getAssignees(String token) async {
+  Future<List<TicketAssignee>> getAssignees(
+    String token, {
+    String? departmentId,
+  }) async {
     try {
+      final queryParam = departmentId != null && departmentId.isNotEmpty
+          ? '?department_id=${Uri.encodeComponent(departmentId)}'
+          : '';
       final response = await _dio.get<Map<String, dynamic>>(
-        '/api/tickets/assignees',
+        '/api/users/solvers$queryParam',
         options: _auth(token),
       );
       final data = _responseData(response.data);
@@ -116,9 +122,9 @@ class TicketModel {
 
   Future<void> assign(String ticketId, String assigneeId, String token) async {
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
+      final response = await _dio.patch<Map<String, dynamic>>(
         '/api/tickets/${Uri.encodeComponent(ticketId)}/assign',
-        data: {'assigneeId': assigneeId},
+        data: {'assigned_to': assigneeId},
         options: _auth(token),
       );
       _responseData(response.data);
@@ -130,12 +136,17 @@ class TicketModel {
   Future<void> updateStatus(
     String ticketId,
     TicketStatus status,
-    String token,
-  ) async {
+    String token, {
+    String? comment,
+  }) async {
     try {
       final response = await _dio.patch<Map<String, dynamic>>(
         '/api/tickets/${Uri.encodeComponent(ticketId)}/status',
-        data: {'status': status.apiValue},
+        data: {
+          'status': status.apiValue,
+          if (comment != null && comment.trim().isNotEmpty)
+            'comment': comment.trim(),
+        },
         options: _auth(token),
       );
       _responseData(response.data);

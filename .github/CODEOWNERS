@@ -21,11 +21,11 @@ CONTRIBUTING.md                     @FernandoPichardo21
 DEPLOYMENT_STRATEGY.md              @FernandoPichardo21
 
 # ── Capa de datos (acceso a API y modelos) ───────────────────────────────────
-centrix_mobile/lib/features/auth/data/          @FernandoPichardo21
+lib/features/auth/models/                      @FernandoPichardo21
 
 
 # ── Pruebas unitarias ────────────────────────────────────────────────────────
-centrix_mobile/test/                            @FernandoPichardo21
+test/                                          @FernandoPichardo21
 
 # ── Android nativo ────────────────────────────────────────────────────────────
 android/                            @FernandoPichardo21

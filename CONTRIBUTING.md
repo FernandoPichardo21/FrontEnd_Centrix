@@ -238,7 +238,7 @@ PR abierto
 Para ejecutar los checks localmente antes de hacer push:
 
 ```bash
-# Desde el directorio centrix_mobile/
+# Desde la raíz del repositorio junto a pubspec.yaml
 flutter pub get
 dart format --output=none --set-exit-if-changed lib/ test/
 flutter analyze --fatal-infos --fatal-warnings

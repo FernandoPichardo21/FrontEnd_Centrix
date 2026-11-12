@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:centrix/app.dart';
 import 'package:centrix/features/admin_users/models/create_user_request.dart';
+import 'package:centrix/features/admin_users/models/user_role_option.dart';
 import 'package:centrix/features/admin_users/models/created_user.dart';
 import 'package:centrix/features/admin_users/models/user_model.dart';
 import 'package:centrix/features/auth/models/auth_model.dart';
@@ -117,7 +118,10 @@ class FakeTicketModel extends TicketModel {
   }
 
   @override
-  Future<List<TicketAssignee>> getAssignees(String token) async => const [
+  Future<List<TicketAssignee>> getAssignees(
+    String token, {
+    String? departmentId,
+  }) async => const [
     TicketAssignee(
       id: 'user-2',
       fullName: 'Juan Pérez',
@@ -135,8 +139,9 @@ class FakeTicketModel extends TicketModel {
   Future<void> updateStatus(
     String ticketId,
     TicketStatus status,
-    String token,
-  ) async {
+    String token, {
+    String? comment,
+  }) async {
     savedStatus = status;
     currentStatus = status.apiValue;
   }
@@ -176,6 +181,12 @@ class FakeTicketModel extends TicketModel {
 class FakeUserModel extends UserModel {
   CreateUserRequest? receivedRequest;
   String? receivedToken;
+  @override
+  Future<List<UserRoleOption>> getRoles(String token) async => const [
+    UserRoleOption(role: 'colaborador', description: 'Colaborador'),
+    UserRoleOption(role: 'gerente', description: 'Gerente'),
+    UserRoleOption(role: 'administrador', description: 'Administrador'),
+  ];
 
   @override
   Future<CreatedUser> create(CreateUserRequest request, String token) async {
@@ -196,12 +207,18 @@ Future<void> signIn(WidgetTester tester) async {
 }
 
 Future<void> openModule(WidgetTester tester, String moduleName) async {
-  final module = find.byKey(Key('module-$moduleName'));
-  await tester.scrollUntilVisible(
-    module,
-    250,
-    scrollable: find.byType(Scrollable).first,
-  );
+  var module = find.byKey(Key('module-$moduleName'));
+  if (module.evaluate().isEmpty) {
+    await tester.tap(find.byKey(const Key('dashboard-all-modules')));
+    await tester.pumpAndSettle();
+    module = find.byKey(Key('all-module-$moduleName'));
+    await tester.scrollUntilVisible(
+      module,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+  }
+  await tester.ensureVisible(module);
   await tester.pumpAndSettle();
   await tester.tap(module);
   await tester.pumpAndSettle();
@@ -225,7 +242,7 @@ void main() {
 
     await signIn(tester);
 
-    expect(find.text('Hola, María López'), findsOneWidget);
+    expect(find.text('¡Hola, María!'), findsOneWidget);
     expect(find.text('Colaborador'), findsOneWidget);
     expect(find.byKey(const Key('module-createTicket')), findsOneWidget);
     expect(find.byKey(const Key('module-departments')), findsOneWidget);
@@ -381,12 +398,24 @@ void main() {
       CentrixApp(
         authModel: FakeAuthModel(role: 'administrador'),
         userModel: userModel,
+        departmentModel: FakeDepartmentModel(),
       ),
     );
     await tester.pumpAndSettle();
     await signIn(tester);
 
     await openModule(tester, 'createUser');
+
+    final role = find.byKey(const ValueKey('user-role-colaborador'));
+    await tester.ensureVisible(role);
+    await tester.tap(role);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Gerente').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('user-department-null')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soporte TI').last);
+    await tester.pumpAndSettle();
 
     await tester.enterText(
       find.byKey(const Key('user-email')),
@@ -411,6 +440,8 @@ void main() {
     expect(find.text('Usuario creado'), findsOneWidget);
     expect(find.text('ID del usuario: user-2'), findsOneWidget);
     expect(userModel.receivedRequest?.email, 'nueva@empresa.com');
+    expect(userModel.receivedRequest?.role, 'gerente');
+    expect(userModel.receivedRequest?.departmentId, 'dep-1');
     expect(userModel.receivedToken, 'test-token');
   });
 

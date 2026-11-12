@@ -139,7 +139,7 @@ class _DepartmentCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: CentrixColors.mint,
+          backgroundColor: CentrixColors.raised,
           child: Icon(Icons.apartment_outlined, color: CentrixColors.leaf),
         ),
         title: Text(department.name),

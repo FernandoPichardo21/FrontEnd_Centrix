@@ -19,6 +19,22 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    val configureAndroid = {
+        project.extensions.findByName("android")?.let { ext ->
+            val setCompileSdk = ext.javaClass.methods.firstOrNull { 
+                it.name in listOf("compileSdkVersion", "setCompileSdkVersion", "setCompileSdk") && it.parameterCount == 1 
+            }
+            setCompileSdk?.invoke(ext, 36)
+        }
+    }
+    if (project.state.executed) {
+        configureAndroid()
+    } else {
+        project.afterEvaluate { configureAndroid() }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
