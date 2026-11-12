@@ -68,16 +68,13 @@ class _CentrixGlassState extends State<CentrixGlass> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: widget.dark
-                      ? [const Color(0xEE123D36), const Color(0xDD061F23)]
-                      : [
-                          Colors.white.withValues(alpha: .84),
-                          Colors.white.withValues(alpha: .48),
-                        ],
+                      ? [const Color(0xEC14432D), const Color(0xF4111613)]
+                      : [const Color(0xE9283730), const Color(0xD0141B18)],
                 ),
                 border: Border.all(
                   color: widget.dark
-                      ? CentrixColors.mint.withValues(alpha: .24)
-                      : Colors.white.withValues(alpha: .95),
+                      ? CentrixColors.leaf.withValues(alpha: .32)
+                      : CentrixColors.mint.withValues(alpha: .13),
                 ),
               ),
               child: Material(color: Colors.transparent, child: widget.child),
@@ -123,16 +120,16 @@ class _AmbientPainter extends CustomPainter {
     glow(
       Offset(size.width * .08, size.height * .12),
       size.width * .65,
-      dark ? const Color(0xFF205C4E) : const Color(0xFFCFEBDB),
+      const Color(0xFF123E2C),
     );
     glow(
       Offset(size.width * .92, size.height * .78),
       size.width * .6,
-      dark ? const Color(0xFF15434A) : const Color(0xFFD6E9EF),
+      const Color(0xFF0C241A),
     );
     final dots = Paint()
       ..color = (dark ? CentrixColors.mint : CentrixColors.leaf).withValues(
-        alpha: dark ? .09 : .07,
+        alpha: .025,
       );
     for (double x = 18; x < size.width; x += 28) {
       for (double y = 18; y < size.height; y += 28) {

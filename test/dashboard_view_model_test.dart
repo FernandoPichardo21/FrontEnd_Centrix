@@ -23,6 +23,10 @@ void main() {
       DashboardModule.departments,
     ]);
     expect(dashboardFor(['gerente']).modules, [
+      DashboardModule.managerApprovals,
+      DashboardModule.managerBudget,
+      DashboardModule.managerRequests,
+      DashboardModule.managerReports,
       DashboardModule.createTicket,
       DashboardModule.myTickets,
       DashboardModule.pendingTickets,

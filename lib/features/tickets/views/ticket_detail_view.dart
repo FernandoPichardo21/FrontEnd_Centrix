@@ -159,7 +159,9 @@ class TicketDetailView extends StatelessWidget {
                                           ),
                                         ),
                                     ],
-                                    onChanged: viewModel.isSaving
+                                    onChanged:
+                                        viewModel.isSaving ||
+                                            !viewModel.canAssign
                                         ? null
                                         : viewModel.selectAssignee,
                                   ),
@@ -169,6 +171,7 @@ class TicketDetailView extends StatelessWidget {
                                 key: const Key('assign-ticket'),
                                 onPressed:
                                     viewModel.isSaving ||
+                                        !viewModel.canAssign ||
                                         viewModel.selectedAssigneeId == null
                                     ? null
                                     : () => viewModel.assign(token),
@@ -184,15 +187,35 @@ class TicketDetailView extends StatelessWidget {
                                   hint: const Text('Selecciona un estado'),
                                   value: viewModel.selectedStatus,
                                   items: [
-                                    for (final status in TicketStatus.values)
+                                    for (final status
+                                        in viewModel.availableStatuses)
                                       DropdownMenuItem(
                                         value: status,
                                         child: Text(status.label),
                                       ),
                                   ],
-                                  onChanged: viewModel.isSaving
+                                  onChanged:
+                                      viewModel.isSaving ||
+                                          viewModel.availableStatuses.isEmpty
                                       ? null
                                       : viewModel.selectStatus,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key('ticket-status-comment'),
+                                enabled: !viewModel.isSaving,
+                                maxLines: 3,
+                                onChanged: viewModel.setStatusComment,
+                                decoration: InputDecoration(
+                                  labelText:
+                                      viewModel
+                                              .selectedStatus
+                                              ?.requiresComment ==
+                                          true
+                                      ? 'Comentario obligatorio'
+                                      : 'Comentario (opcional)',
+                                  hintText: 'Explica el cambio o la solución aplicada',
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -376,9 +399,9 @@ class _SelectionFrame extends StatelessWidget {
     margin: const EdgeInsets.only(top: 8),
     padding: const EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
-      color: CentrixColors.white,
+      color: CentrixColors.surface,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: CentrixColors.sage),
+      border: Border.all(color: CentrixColors.outline),
     ),
     child: child,
   );

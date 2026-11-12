@@ -20,6 +20,7 @@ class TicketDetailViewModel extends ChangeNotifier {
   bool _isLoadingEvidences = false;
   String? _selectedAssigneeId;
   TicketStatus? _selectedStatus;
+  String _statusComment = '';
   String? _errorMessage;
   String? _assigneesError;
   String? _actionMessage;
@@ -35,6 +36,17 @@ class TicketDetailViewModel extends ChangeNotifier {
   bool get isLoadingEvidences => _isLoadingEvidences;
   String? get selectedAssigneeId => _selectedAssigneeId;
   TicketStatus? get selectedStatus => _selectedStatus;
+  String get statusComment => _statusComment;
+  TicketStatus? get currentStatus =>
+      _ticket == null ? null : TicketStatus.fromApi(_ticket!.status);
+  List<TicketStatus> get availableStatuses => TicketStatus.values
+      .where((status) => currentStatus?.canTransitionTo(status) ?? false)
+      .toList();
+  bool get canAssign =>
+      canManage &&
+      _ticket != null &&
+      currentStatus != TicketStatus.cerrado &&
+      currentStatus != TicketStatus.rechazado;
   String? get errorMessage => _errorMessage;
   String? get assigneesError => _assigneesError;
   String? get actionMessage => _actionMessage;
@@ -52,12 +64,8 @@ class TicketDetailViewModel extends ChangeNotifier {
       final ticket = await _model.getById(ticketId, token);
       if (_disposed) return;
       _ticket = ticket;
-      _selectedStatus = TicketStatus.values
-          .where(
-            (status) =>
-                status.apiValue.toLowerCase() == ticket.status.toLowerCase(),
-          )
-          .firstOrNull;
+      _selectedStatus = null;
+      _statusComment = '';
       _selectedAssigneeId = ticket.assignedToId;
       _requiresLogin = false;
     } on ApiException catch (error) {
@@ -97,7 +105,10 @@ class TicketDetailViewModel extends ChangeNotifier {
     _assigneesError = null;
     _notify();
     try {
-      _assignees = await _model.getAssignees(token, departmentId: _ticket?.departmentId);
+      _assignees = await _model.getAssignees(
+        token,
+        departmentId: _ticket?.departmentId,
+      );
       if (!_assignees.any((user) => user.id == _selectedAssigneeId)) {
         _selectedAssigneeId = null;
       }
@@ -122,9 +133,13 @@ class TicketDetailViewModel extends ChangeNotifier {
     _notify();
   }
 
+  void setStatusComment(String value) {
+    _statusComment = value;
+  }
+
   Future<void> assign(String token) async {
     final id = _selectedAssigneeId;
-    if (_disposed || !canManage || _isSaving || id == null) return;
+    if (_disposed || !canAssign || _isSaving || id == null) return;
     await _save(
       () => _model.assign(ticketId, id, token),
       token,
@@ -135,8 +150,20 @@ class TicketDetailViewModel extends ChangeNotifier {
   Future<void> updateStatus(String token) async {
     final status = _selectedStatus;
     if (_disposed || !canManage || _isSaving || status == null) return;
+    if (!availableStatuses.contains(status)) {
+      _actionMessage = 'Ese cambio de estado no está permitido.';
+      _notify();
+      return;
+    }
+    if (status.requiresComment && _statusComment.trim().isEmpty) {
+      _actionMessage =
+          'Escribe un comentario para marcar el ticket como ${status.label}.';
+      _notify();
+      return;
+    }
     await _save(
-      () => _model.updateStatus(ticketId, status, token),
+      () =>
+          _model.updateStatus(ticketId, status, token, comment: _statusComment),
       token,
       'Estado actualizado.',
     );
@@ -156,6 +183,7 @@ class TicketDetailViewModel extends ChangeNotifier {
       _requiresLogin = false;
       try {
         _ticket = await _model.getById(ticketId, token);
+        _selectedStatus = null;
       } on ApiException {
         _actionMessage =
             '$message Actualiza el detalle para ver los datos nuevos.';

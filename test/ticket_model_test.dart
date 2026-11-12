@@ -120,8 +120,7 @@ void main() {
           onRequest: (options, handler) {
             requests.add(options);
             final data = switch (options.path) {
-              '/api/tickets/mine' ||
-              '/api/tickets/pending' => [ticketData],
+              '/api/tickets/mine' || '/api/tickets/pending' => [ticketData],
               '/api/tickets/ticket-2' => ticketData,
               '/api/users/solvers' => [
                 {

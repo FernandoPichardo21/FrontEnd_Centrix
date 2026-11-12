@@ -7,6 +7,7 @@ import '../../features/admin_users/models/user_model.dart';
 import '../../features/admin_users/viewmodels/create_user_view_model.dart';
 import '../../features/admin_users/views/create_user_view.dart';
 import '../../features/dashboard/views/dashboard_view.dart';
+import '../../features/dashboard/viewmodels/dashboard_view_model.dart';
 import '../../features/departments/models/department_model.dart';
 import '../../features/departments/viewmodels/department_view_model.dart';
 import '../../features/departments/views/department_view.dart';
@@ -19,6 +20,14 @@ import '../../features/tickets/views/create_ticket_view.dart';
 import '../../features/tickets/views/department_tickets_view.dart';
 import '../../features/tickets/views/ticket_list_view.dart';
 import '../../features/tickets/views/ticket_detail_view.dart';
+import '../../features/manager/models/manager_demo_model.dart';
+import '../../features/manager/models/manager_request.dart';
+import '../../features/manager/viewmodels/manager_view_model.dart';
+import '../../features/manager/views/manager_workspace_view.dart';
+import '../../features/manager/views/manager_approvals_view.dart';
+import '../../features/manager/views/manager_budget_view.dart';
+import '../../features/manager/views/manager_requests_view.dart';
+import '../../features/manager/views/manager_reports_view.dart';
 
 GoRouter createAppRouter(
   AuthViewModel auth,
@@ -29,9 +38,18 @@ GoRouter createAppRouter(
   initialLocation: '/login',
   refreshListenable: auth,
   redirect: (context, state) {
+    // Public routes contain example data only, never a session or API access.
+    if (state.matchedLocation == '/preview/gerente' ||
+        state.matchedLocation.startsWith('/preview/gerente/')) {
+      return null;
+    }
     final isLoginPage = state.matchedLocation == '/login';
     if (!auth.isAuthenticated && !isLoginPage) return '/login';
     if (auth.isAuthenticated && isLoginPage) return '/home';
+    if (state.matchedLocation.startsWith('/gerente') &&
+        !auth.session!.user.canViewManager) {
+      return '/home';
+    }
     if (state.matchedLocation == '/tickets/new' &&
         !auth.session!.user.canCreateTicket) {
       return '/home';
@@ -51,8 +69,47 @@ GoRouter createAppRouter(
     return null;
   },
   routes: [
+    ShellRoute(
+      builder: (context, state, child) => ChangeNotifierProvider(
+        create: (_) => ManagerViewModel(ManagerDemoModel()),
+        child: child,
+      ),
+      routes: [
+        for (final preview in [false, true]) ...[
+          GoRoute(
+            path: '${preview ? '/preview' : ''}/gerente',
+            redirect: (_, _) =>
+                '${preview ? '/preview' : ''}/gerente/aprobaciones',
+          ),
+          for (final section in ManagerSection.values)
+            GoRoute(
+              path: '${preview ? '/preview' : ''}/gerente/${section.path}',
+              builder: (context, state) => ManagerWorkspaceView(
+                section: section,
+                isPreview: preview,
+                child: switch (section) {
+                  ManagerSection.approvals => const ManagerApprovalsView(),
+                  ManagerSection.budget => const ManagerBudgetView(),
+                  ManagerSection.requests => const ManagerRequestsView(),
+                  ManagerSection.reports => const ManagerReportsView(),
+                },
+              ),
+            ),
+        ],
+      ],
+    ),
     GoRoute(path: '/login', builder: (context, state) => const LoginView()),
-    GoRoute(path: '/home', builder: (context, state) => const DashboardView()),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => ChangeNotifierProvider(
+        create: (_) => DashboardViewModel(
+          auth.session!.user,
+          ticketModel: ticketModel,
+          departmentModel: departmentModel,
+        )..load(auth.session!.token),
+        child: const DashboardView(),
+      ),
+    ),
     GoRoute(
       path: '/departments',
       builder: (context, state) => ChangeNotifierProvider(
@@ -111,7 +168,9 @@ GoRouter createAppRouter(
     GoRoute(
       path: '/admin/users/new',
       builder: (context, state) => ChangeNotifierProvider(
-        create: (_) => CreateUserViewModel(userModel),
+        create: (_) =>
+            CreateUserViewModel(userModel, departmentModel)
+              ..loadOptions(auth.session!.token),
         child: const CreateUserView(),
       ),
     ),

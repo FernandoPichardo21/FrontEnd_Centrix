@@ -1,8 +1,7 @@
 # Centrix — frontend Flutter
 
-La aplicación actual se ejecuta desde la raíz de este repositorio. El código de
-`centrix_mobile/` se conserva como proyecto independiente de los avances anteriores
-del equipo; tiene su propio `pubspec.yaml`.
+La aplicación se ejecuta desde la raíz de este repositorio. El proyecto anterior
+`centrix_mobile/` se retiró; se puede consultar en el historial de Git.
 
 ## Ejecutar
 
@@ -35,6 +34,7 @@ lib/
     departments/ # Catálogo de departamentos
     tickets/     # Creación, consultas, detalle, asignación, estado y evidencias
     admin_users/ # Creación de usuarios
+    manager/     # Prototipo visual de finanzas para Gerente
   app.dart
   main.dart
 ```
@@ -45,12 +45,9 @@ los ViewModels administran los estados y las vistas muestran los datos.
 ## Evidencias de tickets
 
 En **Crear ticket**, selecciona opcionalmente un JPEG, PNG o MP4 de hasta 5 MB.
-Al enviar el formulario, el ViewModel crea el ticket y adjunta el archivo usando
-el ID recibido. Si falla la subida, la misma pantalla permite reintentar únicamente
-la evidencia sin volver a crear el ticket, o continuar sin ella.
-
-El detalle de tickets permite solamente consultar y abrir las evidencias. Las
-imágenes se muestran en la lista y los archivos se abren mediante URLs temporales.
+El ViewModel crea el ticket y después adjunta el archivo usando el ID recibido.
+Si falla la carga, puedes reintentar la evidencia sin volver a crear el ticket.
+El detalle permite solamente consultar y abrir evidencias mediante URLs temporales.
 El botón de actualizar solicita enlaces nuevos.
 
 Esta función necesita que el backend exponga:
@@ -70,3 +67,30 @@ el backend debe tener esas rutas desplegadas para utilizar la carga.
 flutter analyze
 flutter test
 ```
+
+El workflow `ci_mobile.yml` verifica esta aplicación desde la raíz y se ejecuta
+también al publicar cambios en `sprint`. Utiliza el canal estable de Flutter;
+el SDK instalado debe satisfacer la restricción de Dart de `pubspec.yaml`.
+
+La prueba HTTP entre ambos proyectos se activa indicando la carpeta del backend:
+
+```powershell
+$env:CENTRIX_BACKEND_DIR = 'C:\ruta\centrix-backend-actual'
+# Si node no está en PATH: $env:NODE_BINARY = 'C:\ruta\node.exe'
+flutter test test/backend_contract_test.dart
+```
+
+Esa prueba inicia Express en un puerto local temporal y usa base de datos y Storage
+en memoria. Verifica los contratos sin escribir en Supabase.
+Consulta [el estado local y las funciones pendientes](docs/integracion-local.md).
+
+## Pantallas visuales de Gerente
+
+Desde el login, abre **Vista previa · Gerente** para explorar aprobaciones,
+presupuesto, solicitudes del departamento y reportes. Usan datos de ejemplo y
+cambios temporales, sin conectarse al backend. Conservan la organización MVVM
+y el diseño glass de Centrix. Más detalles en [Gerente visual](docs/gerente-visual.md).
+
+Toda la aplicación comparte el [tema oscuro de Centrix](docs/tema-global.md), con
+acentos esmeralda/neón y superficies glass. El dashboard conserva sus accesos
+compactos y navegación inferior: [Dashboard oscuro](docs/dashboard-oscuro.md).

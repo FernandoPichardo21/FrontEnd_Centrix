@@ -2,7 +2,7 @@ name: CI – Centrix Mobile
 
 on:
   push:
-    branches: [main, develop, 'feature/**', 'hotfix/**']
+    branches: [main, sprint, develop, 'feature/**', 'hotfix/**']
   pull_request:
     branches: [main, develop]
 
@@ -12,8 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.24.0'   # Pin para builds reproducibles
-  WORKING_DIR: centrix_mobile  # Sub-package Flutter real del repo
+  WORKING_DIR: .  # La aplicación Flutter actual está en la raíz
 
 jobs:
   # ──────────────────────────────────────────────
@@ -30,10 +29,9 @@ jobs:
       - name: Checkout código fuente
         uses: actions/checkout@v4
 
-      - name: Configurar Flutter ${{ env.FLUTTER_VERSION }}
+      - name: Configurar Flutter estable
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -65,10 +63,9 @@ jobs:
       - name: Checkout código fuente
         uses: actions/checkout@v4
 
-      - name: Configurar Flutter ${{ env.FLUTTER_VERSION }}
+      - name: Configurar Flutter estable
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 

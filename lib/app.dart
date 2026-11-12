@@ -59,9 +59,11 @@ class _CentrixAppState extends State<CentrixApp> {
       child: MaterialApp.router(
         title: 'Centrix',
         debugShowCheckedModeBanner: false,
-        theme: CentrixTheme.light,
-        builder: (context, child) =>
-            CentrixBackdrop(child: child ?? const SizedBox.shrink()),
+        theme: CentrixTheme.dark,
+        builder: (context, child) => CentrixBackdrop(
+          dark: true,
+          child: child ?? const SizedBox.shrink(),
+        ),
         routerConfig: _router,
       ),
     );
