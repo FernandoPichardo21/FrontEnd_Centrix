@@ -12,6 +12,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  # Dart 3.13.3 y Material incluido en Flutter, compatibles con esta aplicación.
+  # Actualizar de forma explícita después de validar una migración de SDK.
+  FLUTTER_VERSION: '3.47.3'
   WORKING_DIR: .  # La aplicación Flutter actual está en la raíz
 
 jobs:
@@ -29,9 +32,10 @@ jobs:
       - name: Checkout código fuente
         uses: actions/checkout@v4
 
-      - name: Configurar Flutter estable
+      - name: Configurar Flutter ${{ env.FLUTTER_VERSION }}
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
@@ -63,9 +67,10 @@ jobs:
       - name: Checkout código fuente
         uses: actions/checkout@v4
 
-      - name: Configurar Flutter estable
+      - name: Configurar Flutter ${{ env.FLUTTER_VERSION }}
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 

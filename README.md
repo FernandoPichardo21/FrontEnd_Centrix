@@ -6,6 +6,8 @@ La aplicación se ejecuta desde la raíz de este repositorio. El proyecto anteri
 ## Ejecutar
 
 Se requiere Flutter con Dart 3.13.3 o superior compatible con `pubspec.yaml`.
+El CI utiliza Flutter 3.47.3 con Dart 3.13.3. Utiliza esa versión para reproducir
+las verificaciones; una actualización de Flutter debe validarse antes de cambiarla.
 Desde la raíz:
 
 ```sh
@@ -69,8 +71,8 @@ flutter test
 ```
 
 El workflow `ci_mobile.yml` verifica esta aplicación desde la raíz y se ejecuta
-también al publicar cambios en `sprint`. Utiliza el canal estable de Flutter;
-el SDK instalado debe satisfacer la restricción de Dart de `pubspec.yaml`.
+también al publicar cambios en `sprint`. Fija Flutter 3.47.3 para evitar cambios
+automáticos de SDK y mantiene el análisis estricto, el formato y las pruebas.
 
 La prueba HTTP entre ambos proyectos se activa indicando la carpeta del backend:
 
