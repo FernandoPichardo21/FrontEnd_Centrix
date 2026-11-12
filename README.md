@@ -73,6 +73,9 @@ flutter test
 El workflow `ci_mobile.yml` verifica esta aplicación desde la raíz y se ejecuta
 también al publicar cambios en `sprint`. Fija Flutter 3.47.3 para evitar cambios
 automáticos de SDK y mantiene el análisis estricto, el formato y las pruebas.
+La cobertura se descarga desde el artefacto `coverage-report` del workflow.
+No se necesita publicar comentarios automáticos ni conceder permisos de escritura
+al bot para verificar el Pull Request.
 
 La prueba HTTP entre ambos proyectos se activa indicando la carpeta del backend:
 

@@ -93,14 +93,6 @@ jobs:
           path: ${{ env.WORKING_DIR }}/coverage/lcov.info
           retention-days: 14
 
-      # Comentario de cobertura en el PR (opcional pero útil)
-      - name: Comentar cobertura en PR
-        if: github.event_name == 'pull_request'
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          lcov-file: ${{ env.WORKING_DIR }}/coverage/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
   # ──────────────────────────────────────────────
   # JOB 3 ▸ RESUMEN FINAL
   # ──────────────────────────────────────────────
