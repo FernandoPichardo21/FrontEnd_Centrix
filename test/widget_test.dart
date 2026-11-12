@@ -117,7 +117,7 @@ class FakeTicketModel extends TicketModel {
   }
 
   @override
-  Future<List<TicketAssignee>> getAssignees(String token) async => const [
+  Future<List<TicketAssignee>> getAssignees(String token, {String? departmentId}) async => const [
     TicketAssignee(
       id: 'user-2',
       fullName: 'Juan Pérez',

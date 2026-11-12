@@ -91,7 +91,7 @@ void main() {
         .getByDepartment('dep-1', 'jwt-test');
 
     expect(sentRequest?.method, 'GET');
-    expect(sentRequest?.path, '/api/tickets/department/dep-1');
+    expect(sentRequest?.path, '/api/tickets/department?department_id=dep-1');
     expect(sentRequest?.headers['Authorization'], 'Bearer jwt-test');
     expect(tickets.single.ticketId, 'ticket-2');
     expect(tickets.single.authorName, 'María López');
@@ -120,10 +120,10 @@ void main() {
           onRequest: (options, handler) {
             requests.add(options);
             final data = switch (options.path) {
-              '/api/tickets/my-tickets' ||
+              '/api/tickets/mine' ||
               '/api/tickets/pending' => [ticketData],
               '/api/tickets/ticket-2' => ticketData,
-              '/api/tickets/assignees' => [
+              '/api/users/solvers' => [
                 {
                   'id': 'user-2',
                   'fullName': 'Juan Pérez',
@@ -164,11 +164,11 @@ void main() {
       await model.updateStatus('ticket-2', TicketStatus.enProgreso, 'jwt-test');
 
       expect(requests.map((request) => '${request.method} ${request.path}'), [
-        'GET /api/tickets/my-tickets',
+        'GET /api/tickets/mine',
         'GET /api/tickets/pending',
         'GET /api/tickets/ticket-2',
-        'GET /api/tickets/assignees',
-        'POST /api/tickets/ticket-2/assign',
+        'GET /api/users/solvers',
+        'PATCH /api/tickets/ticket-2/assign',
         'PATCH /api/tickets/ticket-2/status',
       ]);
       expect(
@@ -177,7 +177,7 @@ void main() {
         ),
         isTrue,
       );
-      expect(requests[4].data, {'assigneeId': 'user-2'});
+      expect(requests[4].data, {'assigned_to': 'user-2'});
       expect(requests[5].data, {'status': 'En progreso'});
     },
   );

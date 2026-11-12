@@ -10,8 +10,8 @@ class TicketAssignee {
   final String email;
 
   factory TicketAssignee.fromJson(Map<String, dynamic> json) => TicketAssignee(
-    id: json['id'] as String,
-    fullName: json['fullName'] as String,
-    email: json['email'] as String,
+    id: (json['id'] ?? '') as String,
+    fullName: (json['fullName'] ?? json['full_name'] ?? 'Sin nombre') as String,
+    email: (json['email'] ?? '') as String,
   );
 }

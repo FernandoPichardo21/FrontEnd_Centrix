@@ -97,7 +97,7 @@ class TicketDetailViewModel extends ChangeNotifier {
     _assigneesError = null;
     _notify();
     try {
-      _assignees = await _model.getAssignees(token);
+      _assignees = await _model.getAssignees(token, departmentId: _ticket?.departmentId);
       if (!_assignees.any((user) => user.id == _selectedAssigneeId)) {
         _selectedAssigneeId = null;
       }
