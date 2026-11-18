@@ -27,9 +27,7 @@ class _DashboardViewState extends State<DashboardView> {
     final auth = context.watch<AuthViewModel>();
     final session = auth.session;
     if (session == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final vm = context.watch<DashboardViewModel>();
     return Theme(
@@ -573,8 +571,6 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         ),
       );
-
-
 }
 
 class _WelcomeCard extends StatelessWidget {

@@ -55,11 +55,15 @@ class NotificationsModal extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.notifications_active, color: CentrixColors.leaf),
+                        const Icon(
+                          Icons.notifications_active,
+                          color: CentrixColors.leaf,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Notificaciones',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: CentrixColors.ink,
                               ),
@@ -68,7 +72,10 @@ class NotificationsModal extends StatelessWidget {
                     ),
                     if (notificationVm.unreadCount > 0)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: CentrixColors.leaf,
                           borderRadius: BorderRadius.circular(12),
@@ -89,45 +96,56 @@ class NotificationsModal extends StatelessWidget {
                   child: notificationVm.isLoading && notifications.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : notifications.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.notifications_none,
-                                      size: 56, color: CentrixColors.sage.withValues(alpha: 0.6)),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    'No tienes notificaciones pendientes',
-                                    style: TextStyle(
-                                      color: CentrixColors.ink.withValues(alpha: 0.7),
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications_none,
+                                size: 56,
+                                color: CentrixColors.sage.withValues(
+                                  alpha: 0.6,
+                                ),
                               ),
-                            )
-                          : ListView.separated(
-                              controller: scrollController,
-                              itemCount: notifications.length,
-                              separatorBuilder: (context, index) => const SizedBox(height: 8),
-                              itemBuilder: (context, index) {
-                                final item = notifications[index];
-                                return _NotificationTile(
-                                  item: item,
-                                  onTap: () async {
-                                    if (!item.isRead && token.isNotEmpty) {
-                                      await notificationVm.markAsRead(item.id, token);
-                                    }
-                                    if (item.ticketId != null &&
-                                        item.ticketId!.isNotEmpty &&
-                                        context.mounted) {
-                                      Navigator.of(context).pop();
-                                      context.push('/tickets/${item.ticketId}');
-                                    }
-                                  },
-                                );
+                              const SizedBox(height: 12),
+                              Text(
+                                'No tienes notificaciones pendientes',
+                                style: TextStyle(
+                                  color: CentrixColors.ink.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          controller: scrollController,
+                          itemCount: notifications.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            final item = notifications[index];
+                            return _NotificationTile(
+                              item: item,
+                              onTap: () async {
+                                if (!item.isRead && token.isNotEmpty) {
+                                  await notificationVm.markAsRead(
+                                    item.id,
+                                    token,
+                                  );
+                                }
+                                if (item.ticketId != null &&
+                                    item.ticketId!.isNotEmpty &&
+                                    context.mounted) {
+                                  Navigator.of(context).pop();
+                                  context.push('/tickets/${item.ticketId}');
+                                }
                               },
-                            ),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
@@ -172,8 +190,8 @@ class _NotificationTile extends StatelessWidget {
                 item.type == 'ticket_assigned'
                     ? Icons.assignment_ind
                     : item.type == 'status_changed'
-                        ? Icons.sync
-                        : Icons.notifications,
+                    ? Icons.sync
+                    : Icons.notifications,
                 color: item.isRead ? CentrixColors.sage : CentrixColors.leaf,
                 size: 22,
               ),
@@ -189,7 +207,9 @@ class _NotificationTile extends StatelessWidget {
                         child: Text(
                           item.title,
                           style: TextStyle(
-                            fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
+                            fontWeight: item.isRead
+                                ? FontWeight.w600
+                                : FontWeight.bold,
                             fontSize: 14,
                             color: CentrixColors.ink,
                           ),
@@ -229,7 +249,11 @@ class _NotificationTile extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.arrow_forward_ios, size: 10, color: CentrixColors.leaf),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 10,
+                            color: CentrixColors.leaf,
+                          ),
                         ],
                       ),
                     ),

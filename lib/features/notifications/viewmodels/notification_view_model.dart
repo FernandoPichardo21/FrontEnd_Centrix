@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 
 import '../../../core/network/api_exception.dart';
@@ -31,8 +32,8 @@ class NotificationViewModel extends ChangeNotifier {
       final platform = kIsWeb
           ? 'web'
           : Platform.isAndroid
-              ? 'android'
-              : 'ios';
+          ? 'android'
+          : 'ios';
       try {
         await _model.registerDeviceToken(
           fcmToken: fcmToken,
@@ -40,7 +41,9 @@ class NotificationViewModel extends ChangeNotifier {
           token: sessionToken,
         );
       } catch (e) {
-        debugPrint('[NotificationViewModel] Error registrando token en backend: $e');
+        debugPrint(
+          '[NotificationViewModel] Error registrando token en backend: $e',
+        );
       }
     }
   }

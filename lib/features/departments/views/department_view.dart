@@ -18,9 +18,7 @@ class DepartmentView extends StatelessWidget {
     final viewModel = context.watch<DepartmentViewModel>();
     final session = auth.session;
     if (session == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final token = session.token;
 

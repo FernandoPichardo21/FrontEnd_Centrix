@@ -82,9 +82,7 @@ class _CreateTicketViewState extends State<CreateTicketView> {
     final viewModel = context.watch<CreateTicketViewModel>();
     final session = auth.session;
     if (session == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final token = session.token;
 

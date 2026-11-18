@@ -8,9 +8,8 @@ class NotificationModel {
 
   final Dio _dio;
 
-  Options _auth(String token) => Options(
-        headers: {'Authorization': 'Bearer $token'},
-      );
+  Options _auth(String token) =>
+      Options(headers: {'Authorization': 'Bearer $token'});
 
   Future<void> registerDeviceToken({
     required String fcmToken,
@@ -63,9 +62,11 @@ class NotificationModel {
       }
       final list = body['data'] as List;
       return list
-          .map((item) => NotificationItem.fromJson(
-                Map<String, dynamic>.from(item as Map),
-              ))
+          .map(
+            (item) => NotificationItem.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
           .toList(growable: false);
     } on DioException catch (error) {
       throw _apiException(error, 'No se pudieron cargar las notificaciones.');

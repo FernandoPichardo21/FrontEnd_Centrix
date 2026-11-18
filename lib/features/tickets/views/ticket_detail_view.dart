@@ -19,9 +19,7 @@ class TicketDetailView extends StatelessWidget {
     final viewModel = context.watch<TicketDetailViewModel>();
     final session = auth.session;
     if (session == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final token = session.token;
     final ticket = viewModel.ticket;
