@@ -22,10 +22,25 @@ subprojects {
 subprojects {
     val configureAndroid = {
         project.extensions.findByName("android")?.let { ext ->
-            val setCompileSdk = ext.javaClass.methods.firstOrNull { 
-                it.name in listOf("compileSdkVersion", "setCompileSdkVersion", "setCompileSdk") && it.parameterCount == 1 
+            val intMethod = ext.javaClass.methods.firstOrNull { 
+                it.name in listOf("compileSdkVersion", "setCompileSdkVersion", "setCompileSdk") && 
+                it.parameterCount == 1 &&
+                (it.parameterTypes[0] == Int::class.javaPrimitiveType || it.parameterTypes[0] == java.lang.Integer::class.java)
             }
-            setCompileSdk?.invoke(ext, 36)
+            if (intMethod != null) {
+                try {
+                    intMethod.invoke(ext, 36)
+                } catch (_: Throwable) {}
+            } else {
+                val strMethod = ext.javaClass.methods.firstOrNull {
+                    it.name in listOf("compileSdkVersion", "setCompileSdkVersion", "setCompileSdk") &&
+                    it.parameterCount == 1 &&
+                    it.parameterTypes[0] == String::class.java
+                }
+                try {
+                    strMethod?.invoke(ext, "android-36")
+                } catch (_: Throwable) {}
+            }
         }
     }
     if (project.state.executed) {

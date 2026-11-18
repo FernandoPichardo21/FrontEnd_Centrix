@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1068546121032",
+    "project_id": "centri-698a7",
+    "storage_bucket": "centri-698a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068546121032:android:507d2a958158ba9b49a77d",
+        "android_client_info": {
+          "package_name": "com.example.centrix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1EcPFfuDo5nrWYpLdZw6PSeeePkjvDt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

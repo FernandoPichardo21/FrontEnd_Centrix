@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/centrix_theme.dart';
 import '../../../core/widgets/centrix_glass.dart';
 import '../../auth/viewmodels/auth_view_model.dart';
+import '../../notifications/viewmodels/notification_view_model.dart';
+import '../../notifications/views/notifications_modal.dart';
 import '../models/dashboard_module.dart';
 import '../viewmodels/dashboard_view_model.dart';
 
@@ -14,7 +16,13 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthViewModel>();
-    final dashboard = DashboardViewModel(auth.session!.user);
+    final session = auth.session;
+    if (session == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final dashboard = DashboardViewModel(session.user);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -28,6 +36,22 @@ class DashboardView extends StatelessWidget {
           ],
         ),
         actions: [
+          Consumer<NotificationViewModel>(
+            builder: (context, notifVm, _) {
+              final unread = notifVm.unreadCount;
+              return IconButton(
+                tooltip: 'Notificaciones',
+                onPressed: () => NotificationsModal.show(context),
+                icon: Badge(
+                  isLabelVisible: unread > 0,
+                  label: Text('$unread'),
+                  backgroundColor: CentrixColors.leaf,
+                  textColor: CentrixColors.white,
+                  child: const Icon(Icons.notifications_outlined),
+                ),
+              );
+            },
+          ),
           IconButton(
             tooltip: 'Cerrar sesión',
             onPressed: auth.logout,
@@ -55,9 +79,11 @@ class DashboardView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    'Tu centro de operaciones',
-                    style: theme.textTheme.titleLarge,
+                  Flexible(
+                    child: Text(
+                      'Tu centro de operaciones',
+                      style: theme.textTheme.titleLarge,
+                    ),
                   ),
                 ],
               ),
@@ -106,7 +132,7 @@ class _WelcomePanel extends StatelessWidget {
     radius: 32,
     child: LayoutBuilder(
       builder: (context, constraints) {
-        final wide = constraints.maxWidth > 780;
+        final wide = constraints.maxWidth >= 920;
         return Stack(
           children: [
             const Positioned(
@@ -133,13 +159,15 @@ class _WelcomePanel extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 9),
-                            const Text(
-                              'TU ESPACIO DE TRABAJO',
-                              style: TextStyle(
-                                color: CentrixColors.sage,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 2.2,
+                            const Flexible(
+                              child: Text(
+                                'TU ESPACIO DE TRABAJO',
+                                style: TextStyle(
+                                  color: CentrixColors.sage,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 2.2,
+                                ),
                               ),
                             ),
                           ],
@@ -188,6 +216,7 @@ class _WelcomePanel extends StatelessWidget {
                               ),
                               Text(
                                 dashboard.user.email,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   color: CentrixColors.mint,
                                   fontSize: 13,

@@ -40,6 +40,7 @@ class _CreateUserViewState extends State<CreateUserView> {
   }
 
   Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
     final created = await context.read<CreateUserViewModel>().submit(
       CreateUserRequest(

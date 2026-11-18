@@ -16,7 +16,13 @@ class DepartmentView extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.read<AuthViewModel>();
     final viewModel = context.watch<DepartmentViewModel>();
-    final token = auth.session!.token;
+    final session = auth.session;
+    if (session == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final token = session.token;
 
     return Scaffold(
       appBar: AppBar(

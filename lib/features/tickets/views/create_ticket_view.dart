@@ -47,7 +47,13 @@ class _CreateTicketViewState extends State<CreateTicketView> {
   Widget build(BuildContext context) {
     final auth = context.read<AuthViewModel>();
     final viewModel = context.watch<CreateTicketViewModel>();
-    final token = auth.session!.token;
+    final session = auth.session;
+    if (session == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final token = session.token;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Crear ticket')),

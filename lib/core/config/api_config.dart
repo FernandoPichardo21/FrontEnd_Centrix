@@ -12,7 +12,7 @@ class ApiConfig {
       return 'http://$host:3000';
     }
     return defaultTargetPlatform == TargetPlatform.android
-        ? 'http://10.0.2.2:3000'
+        ? 'http://192.168.0.19:3000'
         : 'http://localhost:3000';
   }
 }

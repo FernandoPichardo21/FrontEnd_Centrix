@@ -16,7 +16,13 @@ class TicketListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.read<AuthViewModel>();
     final viewModel = context.watch<TicketListViewModel>();
-    final token = auth.session!.token;
+    final session = auth.session;
+    if (session == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final token = session.token;
     final isPending = viewModel.mode == TicketListMode.pending;
     final title = isPending ? 'Tickets pendientes' : 'Mis tickets';
 
