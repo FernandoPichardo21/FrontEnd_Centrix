@@ -37,11 +37,16 @@ class Ticket {
       description: (json['description'] ?? '') as String,
       priority: (json['priority'] ?? '') as String,
       status: (json['status'] ?? '') as String,
-      departmentId: (json['departmentId'] ?? json['department_id'] ?? '') as String,
+      departmentId:
+          (json['departmentId'] ?? json['department_id'] ?? '') as String,
       createdAtIso: (json['createdAtIso'] ?? json['created_at']) as String?,
       updatedAtIso: (json['updatedAtIso'] ?? json['updated_at']) as String?,
-      createdById: (json['createdById'] ?? json['createdBy'] ?? json['created_by']) as String?,
-      assignedToId: (json['assignedToId'] ?? json['assignedTo'] ?? json['assigned_to']) as String?,
+      createdById:
+          (json['createdById'] ?? json['createdBy'] ?? json['created_by'])
+              as String?,
+      assignedToId:
+          (json['assignedToId'] ?? json['assignedTo'] ?? json['assigned_to'])
+              as String?,
       authorName: (json['authorName'] ?? 'Desconocido') as String,
       assignedToName: (json['assignedToName'] ?? 'Sin asignar') as String,
     );

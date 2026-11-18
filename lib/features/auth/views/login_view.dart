@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/centrix_theme.dart';
@@ -108,45 +109,48 @@ class _BrandIntro extends StatelessWidget {
         ? CrossAxisAlignment.start
         : CrossAxisAlignment.center,
     children: [
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(11),
-            decoration: BoxDecoration(
-              color: CentrixColors.mint.withValues(alpha: .12),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: CentrixColors.mint.withValues(alpha: .28),
+      FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                color: CentrixColors.mint.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: CentrixColors.mint.withValues(alpha: .28),
+                ),
+              ),
+              child: const Icon(
+                Icons.hub_rounded,
+                color: CentrixColors.mint,
+                size: 25,
               ),
             ),
-            child: const Icon(
-              Icons.hub_rounded,
-              color: CentrixColors.mint,
-              size: 25,
+            const SizedBox(width: 13),
+            const Text(
+              'Centrix',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1,
+              ),
             ),
-          ),
-          const SizedBox(width: 13),
-          const Text(
-            'Centrix',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
+            const SizedBox(width: 14),
+            Text(
+              'WORKSPACE',
+              style: TextStyle(
+                color: CentrixColors.sage.withValues(alpha: .8),
+                fontSize: 9,
+                letterSpacing: 2.2,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(width: 14),
-          Text(
-            'WORKSPACE',
-            style: TextStyle(
-              color: CentrixColors.sage.withValues(alpha: .8),
-              fontSize: 9,
-              letterSpacing: 2.2,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
       SizedBox(height: wide ? 46 : 24),
       Text(
@@ -316,6 +320,16 @@ class _LoginCard extends StatelessWidget {
                         )
                       : const Text('Iniciar sesión'),
                 ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
+              TextButton.icon(
+                key: const Key('open-manager-preview'),
+                onPressed: auth.isLoading
+                    ? null
+                    : () => context.go('/preview/gerente/aprobaciones'),
+                icon: const Icon(Icons.visibility_outlined, size: 18),
+                label: const Text('Vista previa · Gerente'),
               ),
             ],
           ),

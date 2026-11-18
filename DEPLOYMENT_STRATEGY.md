@@ -1,7 +1,7 @@
 # 📋 Estrategia de Despliegue y Distribución Móvil — Centrix Mobile
 
 > **Documento:** Instrucción 4 – Estrategia de Despliegue y Distribución  
-> **Proyecto:** FrontEnd_Centrix / `centrix_mobile` (Flutter)  
+> **Proyecto:** FrontEnd_Centrix / aplicación Flutter en la raíz
 > **Versión:** 1.0 — Septiembre 2026
 
 ---

@@ -33,6 +33,8 @@ void main() {
         nombre: ' Ana ',
         apellidoPat: ' López ',
         apellidoMat: ' García ',
+        role: 'gerente',
+        departmentId: 'dep-1',
       ),
       'jwt-admin',
     );
@@ -47,6 +49,8 @@ void main() {
       'nombre': 'Ana',
       'apellido_pat': 'López',
       'apellido_mat': 'García',
+      'role': 'gerente',
+      'department_id': 'dep-1',
     });
   });
 }

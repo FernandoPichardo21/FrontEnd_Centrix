@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:centrix/app.dart';
 import 'package:centrix/features/admin_users/models/create_user_request.dart';
+import 'package:centrix/features/admin_users/models/user_role_option.dart';
 import 'package:centrix/features/admin_users/models/created_user.dart';
 import 'package:centrix/features/admin_users/models/user_model.dart';
 import 'package:centrix/features/auth/models/auth_model.dart';
@@ -14,6 +17,9 @@ import 'package:centrix/features/tickets/models/ticket_assignee.dart';
 import 'package:centrix/features/tickets/models/ticket_model.dart';
 import 'package:centrix/features/tickets/models/ticket_status.dart';
 import 'package:centrix/features/tickets/models/ticket_evidence.dart';
+import 'package:centrix/features/tickets/models/ticket_evidence_file.dart';
+import 'package:centrix/features/tickets/viewmodels/create_ticket_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -61,6 +67,8 @@ class FakeTicketModel extends TicketModel {
   TicketStatus? savedStatus;
   String? currentAssigneeId;
   String currentStatus = 'Abierto';
+  String? uploadedEvidenceTicketId;
+  List<TicketEvidence> evidenceRecords = const [];
 
   Ticket get currentTicket => Ticket(
     ticketId: 'ticket-2',
@@ -88,10 +96,32 @@ class FakeTicketModel extends TicketModel {
   Future<List<TicketEvidence>> getEvidences(
     String ticketId,
     String token,
-  ) async => const [];
+  ) async => evidenceRecords;
 
   @override
-  Future<List<TicketAssignee>> getAssignees(String token, {String? departmentId}) async => const [
+  Future<TicketEvidence> attachEvidence(
+    String ticketId,
+    TicketEvidenceFile file,
+    String token,
+  ) async {
+    uploadedEvidenceTicketId = ticketId;
+    final evidence = TicketEvidence(
+      evidenceId: 'evidence-1',
+      ticketId: ticketId,
+      mimeType: file.mimeType,
+      size: file.bytes.length,
+      createdAt: null,
+      signedUrl: 'https://example.test/evidence',
+    );
+    evidenceRecords = [evidence];
+    return evidence;
+  }
+
+  @override
+  Future<List<TicketAssignee>> getAssignees(
+    String token, {
+    String? departmentId,
+  }) async => const [
     TicketAssignee(
       id: 'user-2',
       fullName: 'Juan Pérez',
@@ -109,8 +139,9 @@ class FakeTicketModel extends TicketModel {
   Future<void> updateStatus(
     String ticketId,
     TicketStatus status,
-    String token,
-  ) async {
+    String token, {
+    String? comment,
+  }) async {
     savedStatus = status;
     currentStatus = status.apiValue;
   }
@@ -150,6 +181,12 @@ class FakeTicketModel extends TicketModel {
 class FakeUserModel extends UserModel {
   CreateUserRequest? receivedRequest;
   String? receivedToken;
+  @override
+  Future<List<UserRoleOption>> getRoles(String token) async => const [
+    UserRoleOption(role: 'colaborador', description: 'Colaborador'),
+    UserRoleOption(role: 'gerente', description: 'Gerente'),
+    UserRoleOption(role: 'administrador', description: 'Administrador'),
+  ];
 
   @override
   Future<CreatedUser> create(CreateUserRequest request, String token) async {
@@ -170,12 +207,18 @@ Future<void> signIn(WidgetTester tester) async {
 }
 
 Future<void> openModule(WidgetTester tester, String moduleName) async {
-  final module = find.byKey(Key('module-$moduleName'));
-  await tester.scrollUntilVisible(
-    module,
-    250,
-    scrollable: find.byType(Scrollable).first,
-  );
+  var module = find.byKey(Key('module-$moduleName'));
+  if (module.evaluate().isEmpty) {
+    await tester.tap(find.byKey(const Key('dashboard-all-modules')));
+    await tester.pumpAndSettle();
+    module = find.byKey(Key('all-module-$moduleName'));
+    await tester.scrollUntilVisible(
+      module,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+  }
+  await tester.ensureVisible(module);
   await tester.pumpAndSettle();
   await tester.tap(module);
   await tester.pumpAndSettle();
@@ -199,7 +242,7 @@ void main() {
 
     await signIn(tester);
 
-    expect(find.text('Hola, María López'), findsOneWidget);
+    expect(find.text('¡Hola, María!'), findsOneWidget);
     expect(find.text('Colaborador'), findsOneWidget);
     expect(find.byKey(const Key('module-createTicket')), findsOneWidget);
     expect(find.byKey(const Key('module-departments')), findsOneWidget);
@@ -257,6 +300,77 @@ void main() {
     expect(ticketModel.receivedToken, 'test-token');
   });
 
+  testWidgets(
+    'adjunta al crear y el detalle solo permite consultar evidencia',
+    (tester) async {
+      final ticketModel = FakeTicketModel();
+      await tester.pumpWidget(
+        CentrixApp(
+          authModel: FakeAuthModel(),
+          departmentModel: FakeDepartmentModel(),
+          ticketModel: ticketModel,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await signIn(tester);
+      await openModule(tester, 'createTicket');
+      await tester.enterText(
+        find.byKey(const Key('ticket-title')),
+        'Equipo dañado',
+      );
+      await tester.enterText(
+        find.byKey(const Key('ticket-description')),
+        'No enciende',
+      );
+      await tester.ensureVisible(find.byKey(const Key('ticket-priority')));
+      await tester.tap(find.byKey(const Key('ticket-priority')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Alta').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('ticket-department')));
+      await tester.tap(find.byKey(const Key('ticket-department')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Soporte TI').last);
+      await tester.pumpAndSettle();
+      final selection = find.byKey(const Key('select-ticket-evidence'));
+      await tester.ensureVisible(selection);
+      tester
+          .element(selection)
+          .read<CreateTicketViewModel>()
+          .selectEvidence(
+            TicketEvidenceFile(
+              name: 'evidencia.mp4',
+              bytes: Uint8List.fromList([1, 2, 3]),
+              mimeType: 'video/mp4',
+            ),
+          );
+      await tester.pumpAndSettle();
+      expect(find.text('evidencia.mp4'), findsOneWidget);
+      final createButton = find.widgetWithText(FilledButton, 'Crear ticket');
+      await tester.ensureVisible(createButton);
+      await tester.tap(createButton);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('La incidencia y su evidencia se guardaron correctamente.'),
+        findsOneWidget,
+      );
+      expect(ticketModel.uploadedEvidenceTicketId, 'ticket-1');
+      final details = find.widgetWithText(FilledButton, 'Ver ticket');
+      await tester.ensureVisible(details);
+      await tester.tap(details);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('select-ticket-evidence')), findsNothing);
+      expect(find.byKey(const Key('upload-ticket-evidence')), findsNothing);
+      await tester.scrollUntilVisible(
+        find.text('Video MP4'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Abrir evidencia'), findsOneWidget);
+    },
+  );
+
   testWidgets('un gerente ve los tickets de un departamento', (tester) async {
     final ticketModel = FakeTicketModel();
     await tester.pumpWidget(
@@ -284,12 +398,24 @@ void main() {
       CentrixApp(
         authModel: FakeAuthModel(role: 'administrador'),
         userModel: userModel,
+        departmentModel: FakeDepartmentModel(),
       ),
     );
     await tester.pumpAndSettle();
     await signIn(tester);
 
     await openModule(tester, 'createUser');
+
+    final role = find.byKey(const ValueKey('user-role-colaborador'));
+    await tester.ensureVisible(role);
+    await tester.tap(role);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Gerente').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('user-department-null')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soporte TI').last);
+    await tester.pumpAndSettle();
 
     await tester.enterText(
       find.byKey(const Key('user-email')),
@@ -314,6 +440,8 @@ void main() {
     expect(find.text('Usuario creado'), findsOneWidget);
     expect(find.text('ID del usuario: user-2'), findsOneWidget);
     expect(userModel.receivedRequest?.email, 'nueva@empresa.com');
+    expect(userModel.receivedRequest?.role, 'gerente');
+    expect(userModel.receivedRequest?.departmentId, 'dep-1');
     expect(userModel.receivedToken, 'test-token');
   });
 

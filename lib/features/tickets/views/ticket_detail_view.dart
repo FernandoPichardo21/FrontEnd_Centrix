@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -9,7 +8,6 @@ import '../../../core/widgets/centrix_page_header.dart';
 import '../../auth/viewmodels/auth_view_model.dart';
 import '../models/ticket_status.dart';
 import '../models/ticket_evidence.dart';
-import '../models/ticket_evidence_file.dart';
 import '../viewmodels/ticket_detail_view_model.dart';
 
 class TicketDetailView extends StatelessWidget {
@@ -167,7 +165,9 @@ class TicketDetailView extends StatelessWidget {
                                           ),
                                         ),
                                     ],
-                                    onChanged: viewModel.isSaving
+                                    onChanged:
+                                        viewModel.isSaving ||
+                                            !viewModel.canAssign
                                         ? null
                                         : viewModel.selectAssignee,
                                   ),
@@ -177,6 +177,7 @@ class TicketDetailView extends StatelessWidget {
                                 key: const Key('assign-ticket'),
                                 onPressed:
                                     viewModel.isSaving ||
+                                        !viewModel.canAssign ||
                                         viewModel.selectedAssigneeId == null
                                     ? null
                                     : () => viewModel.assign(token),
@@ -192,15 +193,35 @@ class TicketDetailView extends StatelessWidget {
                                   hint: const Text('Selecciona un estado'),
                                   value: viewModel.selectedStatus,
                                   items: [
-                                    for (final status in TicketStatus.values)
+                                    for (final status
+                                        in viewModel.availableStatuses)
                                       DropdownMenuItem(
                                         value: status,
                                         child: Text(status.label),
                                       ),
                                   ],
-                                  onChanged: viewModel.isSaving
+                                  onChanged:
+                                      viewModel.isSaving ||
+                                          viewModel.availableStatuses.isEmpty
                                       ? null
                                       : viewModel.selectStatus,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key('ticket-status-comment'),
+                                enabled: !viewModel.isSaving,
+                                maxLines: 3,
+                                onChanged: viewModel.setStatusComment,
+                                decoration: InputDecoration(
+                                  labelText:
+                                      viewModel
+                                              .selectedStatus
+                                              ?.requiresComment ==
+                                          true
+                                      ? 'Comentario obligatorio'
+                                      : 'Comentario (opcional)',
+                                  hintText: 'Explica el cambio o la solución aplicada',
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -245,39 +266,8 @@ class _EvidenceCard extends StatelessWidget {
   final TicketDetailViewModel viewModel;
   final String token;
 
-  Future<void> _pickFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4'],
-        withData: true,
-      );
-      if (result == null) return;
-      final file = result.files.single;
-      final bytes = file.bytes;
-      if (bytes == null) {
-        viewModel.setEvidenceSelectionError(
-          'No se pudo leer el archivo seleccionado.',
-        );
-        return;
-      }
-      final mimeType = switch (file.extension?.toLowerCase()) {
-        'jpg' || 'jpeg' => 'image/jpeg',
-        'png' => 'image/png',
-        'mp4' => 'video/mp4',
-        _ => '',
-      };
-      viewModel.selectEvidence(
-        TicketEvidenceFile(name: file.name, bytes: bytes, mimeType: mimeType),
-      );
-    } catch (_) {
-      viewModel.setEvidenceSelectionError('No se pudo seleccionar el archivo.');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final selected = viewModel.selectedEvidence;
     return CentrixGlass(
       child: Padding(
         padding: const EdgeInsets.all(22),
@@ -287,40 +277,8 @@ class _EvidenceCard extends StatelessWidget {
             Text('Evidencias', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 6),
             const Text(
-              'Adjunta fotografías o videos al ticket. Formatos: JPG, PNG o MP4; máximo 5 MB.',
+              'Consulta las fotografías y videos adjuntos a esta incidencia.',
             ),
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              key: const Key('select-ticket-evidence'),
-              onPressed: viewModel.isUploadingEvidence ? null : _pickFile,
-              icon: const Icon(Icons.attach_file),
-              label: const Text('Seleccionar archivo'),
-            ),
-            if (selected != null) ...[
-              const SizedBox(height: 12),
-              Text('Seleccionado: ${selected.name}'),
-              if (selected.isImage) ...[
-                const SizedBox(height: 10),
-                Image.memory(selected.bytes, height: 180, fit: BoxFit.contain),
-              ],
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                key: const Key('upload-ticket-evidence'),
-                onPressed: viewModel.isUploadingEvidence
-                    ? null
-                    : () => viewModel.uploadEvidence(token),
-                icon: const Icon(Icons.cloud_upload_outlined),
-                label: const Text('Adjuntar evidencia'),
-              ),
-            ],
-            if (viewModel.isUploadingEvidence) ...[
-              const SizedBox(height: 12),
-              const LinearProgressIndicator(),
-            ],
-            if (viewModel.evidenceMessage != null) ...[
-              const SizedBox(height: 10),
-              Text(viewModel.evidenceMessage!),
-            ],
             if (viewModel.evidenceError != null) ...[
               const SizedBox(height: 10),
               Text(
@@ -357,7 +315,9 @@ class _EvidenceCard extends StatelessWidget {
               ],
             ),
             if (viewModel.isLoadingEvidences) const LinearProgressIndicator(),
-            if (!viewModel.isLoadingEvidences && viewModel.evidences.isEmpty)
+            if (!viewModel.isLoadingEvidences &&
+                viewModel.evidences.isEmpty &&
+                viewModel.evidenceError == null)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('Este ticket aún no tiene evidencias.'),
@@ -445,9 +405,9 @@ class _SelectionFrame extends StatelessWidget {
     margin: const EdgeInsets.only(top: 8),
     padding: const EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
-      color: CentrixColors.white,
+      color: CentrixColors.surface,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: CentrixColors.sage),
+      border: Border.all(color: CentrixColors.outline),
     ),
     child: child,
   );

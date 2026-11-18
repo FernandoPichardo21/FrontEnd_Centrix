@@ -6,7 +6,6 @@ import '../models/ticket_assignee.dart';
 import '../models/ticket_model.dart';
 import '../models/ticket_status.dart';
 import '../models/ticket_evidence.dart';
-import '../models/ticket_evidence_file.dart';
 
 class TicketDetailViewModel extends ChangeNotifier {
   TicketDetailViewModel(this._model, this.ticketId, this.canManage);
@@ -17,13 +16,11 @@ class TicketDetailViewModel extends ChangeNotifier {
   Ticket? _ticket;
   List<TicketAssignee> _assignees = const [];
   List<TicketEvidence> _evidences = const [];
-  TicketEvidenceFile? _selectedEvidence;
   String? _evidenceError;
-  String? _evidenceMessage;
   bool _isLoadingEvidences = false;
-  bool _isUploadingEvidence = false;
   String? _selectedAssigneeId;
   TicketStatus? _selectedStatus;
+  String _statusComment = '';
   String? _errorMessage;
   String? _assigneesError;
   String? _actionMessage;
@@ -35,13 +32,21 @@ class TicketDetailViewModel extends ChangeNotifier {
   Ticket? get ticket => _ticket;
   List<TicketAssignee> get assignees => _assignees;
   List<TicketEvidence> get evidences => _evidences;
-  TicketEvidenceFile? get selectedEvidence => _selectedEvidence;
   String? get evidenceError => _evidenceError;
-  String? get evidenceMessage => _evidenceMessage;
   bool get isLoadingEvidences => _isLoadingEvidences;
-  bool get isUploadingEvidence => _isUploadingEvidence;
   String? get selectedAssigneeId => _selectedAssigneeId;
   TicketStatus? get selectedStatus => _selectedStatus;
+  String get statusComment => _statusComment;
+  TicketStatus? get currentStatus =>
+      _ticket == null ? null : TicketStatus.fromApi(_ticket!.status);
+  List<TicketStatus> get availableStatuses => TicketStatus.values
+      .where((status) => currentStatus?.canTransitionTo(status) ?? false)
+      .toList();
+  bool get canAssign =>
+      canManage &&
+      _ticket != null &&
+      currentStatus != TicketStatus.cerrado &&
+      currentStatus != TicketStatus.rechazado;
   String? get errorMessage => _errorMessage;
   String? get assigneesError => _assigneesError;
   String? get actionMessage => _actionMessage;
@@ -59,12 +64,8 @@ class TicketDetailViewModel extends ChangeNotifier {
       final ticket = await _model.getById(ticketId, token);
       if (_disposed) return;
       _ticket = ticket;
-      _selectedStatus = TicketStatus.values
-          .where(
-            (status) =>
-                status.apiValue.toLowerCase() == ticket.status.toLowerCase(),
-          )
-          .firstOrNull;
+      _selectedStatus = null;
+      _statusComment = '';
       _selectedAssigneeId = ticket.assignedToId;
       _requiresLogin = false;
     } on ApiException catch (error) {
@@ -99,64 +100,15 @@ class TicketDetailViewModel extends ChangeNotifier {
     }
   }
 
-  void selectEvidence(TicketEvidenceFile file) {
-    if (_disposed || _isUploadingEvidence) return;
-    if (file.bytes.isEmpty || file.bytes.length > 5 * 1024 * 1024) {
-      _evidenceError = 'Selecciona un archivo de hasta 5 MB.';
-      _selectedEvidence = null;
-    } else if (![
-      'image/jpeg',
-      'image/png',
-      'video/mp4',
-    ].contains(file.mimeType)) {
-      _evidenceError = 'Solo se aceptan imágenes JPEG, PNG o videos MP4.';
-      _selectedEvidence = null;
-    } else {
-      _selectedEvidence = file;
-      _evidenceError = null;
-      _evidenceMessage = null;
-    }
-    _notify();
-  }
-
-  void setEvidenceSelectionError(String message) {
-    if (_disposed) return;
-    _evidenceError = message;
-    _notify();
-  }
-
-  Future<void> uploadEvidence(String token) async {
-    final file = _selectedEvidence;
-    if (_disposed || _ticket == null || _isUploadingEvidence || file == null) {
-      return;
-    }
-    _isUploadingEvidence = true;
-    _evidenceError = null;
-    _evidenceMessage = null;
-    _notify();
-    try {
-      final evidence = await _model.attachEvidence(ticketId, file, token);
-      _evidences = [evidence, ..._evidences];
-      _selectedEvidence = null;
-      _evidenceMessage = 'Evidencia adjuntada correctamente.';
-      _requiresLogin = false;
-    } on ApiException catch (error) {
-      _evidenceError = error.message;
-      _requiresLogin = error.statusCode == 401;
-    } catch (_) {
-      _evidenceError = 'No se pudo adjuntar la evidencia.';
-    } finally {
-      _isUploadingEvidence = false;
-      _notify();
-    }
-  }
-
   Future<void> loadAssignees(String token) async {
     if (_disposed || !canManage) return;
     _assigneesError = null;
     _notify();
     try {
-      _assignees = await _model.getAssignees(token, departmentId: _ticket?.departmentId);
+      _assignees = await _model.getAssignees(
+        token,
+        departmentId: _ticket?.departmentId,
+      );
       if (!_assignees.any((user) => user.id == _selectedAssigneeId)) {
         _selectedAssigneeId = null;
       }
@@ -181,9 +133,13 @@ class TicketDetailViewModel extends ChangeNotifier {
     _notify();
   }
 
+  void setStatusComment(String value) {
+    _statusComment = value;
+  }
+
   Future<void> assign(String token) async {
     final id = _selectedAssigneeId;
-    if (_disposed || !canManage || _isSaving || id == null) return;
+    if (_disposed || !canAssign || _isSaving || id == null) return;
     await _save(
       () => _model.assign(ticketId, id, token),
       token,
@@ -194,8 +150,20 @@ class TicketDetailViewModel extends ChangeNotifier {
   Future<void> updateStatus(String token) async {
     final status = _selectedStatus;
     if (_disposed || !canManage || _isSaving || status == null) return;
+    if (!availableStatuses.contains(status)) {
+      _actionMessage = 'Ese cambio de estado no está permitido.';
+      _notify();
+      return;
+    }
+    if (status.requiresComment && _statusComment.trim().isEmpty) {
+      _actionMessage =
+          'Escribe un comentario para marcar el ticket como ${status.label}.';
+      _notify();
+      return;
+    }
     await _save(
-      () => _model.updateStatus(ticketId, status, token),
+      () =>
+          _model.updateStatus(ticketId, status, token, comment: _statusComment),
       token,
       'Estado actualizado.',
     );
@@ -215,6 +183,7 @@ class TicketDetailViewModel extends ChangeNotifier {
       _requiresLogin = false;
       try {
         _ticket = await _model.getById(ticketId, token);
+        _selectedStatus = null;
       } on ApiException {
         _actionMessage =
             '$message Actualiza el detalle para ver los datos nuevos.';

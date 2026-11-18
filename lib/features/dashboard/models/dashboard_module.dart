@@ -5,4 +5,8 @@ enum DashboardModule {
   departmentTickets,
   departments,
   createUser,
+  managerApprovals,
+  managerBudget,
+  managerRequests,
+  managerReports,
 }

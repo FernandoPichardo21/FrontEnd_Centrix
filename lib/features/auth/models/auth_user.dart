@@ -34,6 +34,7 @@ class AuthUser {
   bool get canManageTickets => canViewDepartmentTickets;
 
   bool get canCreateUser => hasAnyRole(const ['administrador']);
+  bool get canViewManager => hasAnyRole(const ['gerente']);
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     return AuthUser(

@@ -91,7 +91,10 @@ class TicketModel {
     }
   }
 
-  Future<List<TicketAssignee>> getAssignees(String token, {String? departmentId}) async {
+  Future<List<TicketAssignee>> getAssignees(
+    String token, {
+    String? departmentId,
+  }) async {
     try {
       final queryParam = departmentId != null && departmentId.isNotEmpty
           ? '?department_id=${Uri.encodeComponent(departmentId)}'
@@ -133,12 +136,17 @@ class TicketModel {
   Future<void> updateStatus(
     String ticketId,
     TicketStatus status,
-    String token,
-  ) async {
+    String token, {
+    String? comment,
+  }) async {
     try {
       final response = await _dio.patch<Map<String, dynamic>>(
         '/api/tickets/${Uri.encodeComponent(ticketId)}/status',
-        data: {'status': status.apiValue},
+        data: {
+          'status': status.apiValue,
+          if (comment != null && comment.trim().isNotEmpty)
+            'comment': comment.trim(),
+        },
         options: _auth(token),
       );
       _responseData(response.data);
@@ -167,7 +175,6 @@ class TicketModel {
           )
           .toList(growable: false);
     } on DioException catch (error) {
-      if (error.response?.statusCode == 404) return const [];
       throw _apiException(error, 'No se pudieron cargar las evidencias.');
     } on TypeError {
       throw const ApiException('Respuesta inesperada del servidor.');
