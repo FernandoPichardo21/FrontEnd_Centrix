@@ -5,7 +5,9 @@ import '../../features/auth/viewmodels/auth_view_model.dart';
 import '../../features/auth/views/login_view.dart';
 import '../../features/admin_users/models/user_model.dart';
 import '../../features/admin_users/viewmodels/create_user_view_model.dart';
+import '../../features/admin_users/viewmodels/user_management_view_model.dart';
 import '../../features/admin_users/views/create_user_view.dart';
+import '../../features/admin_users/views/user_management_view.dart';
 import '../../features/dashboard/views/dashboard_view.dart';
 import '../../features/dashboard/viewmodels/dashboard_view_model.dart';
 import '../../features/departments/models/department_model.dart';
@@ -62,7 +64,7 @@ GoRouter createAppRouter(
         !auth.session!.user.canManageTickets) {
       return '/home';
     }
-    if (state.matchedLocation == '/admin/users/new' &&
+    if (state.matchedLocation.startsWith('/admin/users') &&
         !auth.session!.user.canCreateUser) {
       return '/home';
     }
@@ -163,6 +165,15 @@ GoRouter createAppRouter(
           auth.session!.user.canManageTickets,
         )..load(auth.session!.token),
         child: const TicketDetailView(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/users',
+      builder: (context, state) => ChangeNotifierProvider(
+        create: (_) =>
+            UserManagementViewModel(userModel, departmentModel)
+              ..loadInitial(auth.session!.token),
+        child: const UserManagementView(),
       ),
     ),
     GoRoute(
