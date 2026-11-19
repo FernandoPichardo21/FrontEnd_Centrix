@@ -80,6 +80,7 @@ class DashboardViewModel extends ChangeNotifier {
             DashboardModule.pendingTickets,
             DashboardModule.departments,
             DashboardModule.createUser,
+            DashboardModule.userManagement,
           ];
     return preferred
         .where((module) => modules.contains(module) && module != primaryModule)
@@ -98,6 +99,7 @@ class DashboardViewModel extends ChangeNotifier {
       DashboardModule.pendingTickets => count(_pending?.length),
       DashboardModule.departments => count(_departmentCount),
       DashboardModule.createTicket || DashboardModule.createUser => '+',
+      DashboardModule.userManagement => '→',
       DashboardModule.managerApprovals ||
       DashboardModule.managerBudget ||
       DashboardModule.managerRequests ||
@@ -174,6 +176,7 @@ class DashboardViewModel extends ChangeNotifier {
       if (user.canViewDepartmentTickets) DashboardModule.departmentTickets,
       DashboardModule.departments,
       if (user.canCreateUser) DashboardModule.createUser,
+      if (user.canCreateUser) DashboardModule.userManagement,
     ];
   }
 

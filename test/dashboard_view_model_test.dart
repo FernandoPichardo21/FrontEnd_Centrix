@@ -40,6 +40,7 @@ void main() {
       DashboardModule.departmentTickets,
       DashboardModule.departments,
       DashboardModule.createUser,
+      DashboardModule.userManagement,
     ]);
     expect(dashboardFor(['soporte_tecnico']).modules, [
       DashboardModule.myTickets,
@@ -55,6 +56,7 @@ void main() {
       DashboardModule.departmentTickets,
       DashboardModule.departments,
       DashboardModule.createUser,
+      DashboardModule.userManagement,
     ]);
   });
 }
