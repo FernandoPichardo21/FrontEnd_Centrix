@@ -31,6 +31,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/android/build/
+.gradle/
 /coverage/
 
 # Symbolication related
@@ -46,3 +48,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Firebase configuration secrets
+android/app/google-services.json

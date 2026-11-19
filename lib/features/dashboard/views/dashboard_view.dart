@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../auth/viewmodels/auth_view_model.dart';
+import '../../notifications/viewmodels/notification_view_model.dart';
+import '../../notifications/views/notifications_modal.dart';
 import '../../tickets/models/ticket.dart';
 import '../models/dashboard_module.dart';
 import '../viewmodels/dashboard_view_model.dart';
@@ -22,8 +24,12 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthViewModel>();
+    final session = auth.session;
+    if (session == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     final vm = context.watch<DashboardViewModel>();
-    final auth = context.read<AuthViewModel>();
     return Theme(
       data: DashboardColors.theme,
       child: Builder(
@@ -66,19 +72,25 @@ class _DashboardViewState extends State<DashboardView> {
               ],
             ),
             actions: [
-              IconButton(
-                tooltip: 'Avisos de tickets',
-                onPressed: () => _showNotifications(context, vm),
-                icon: Badge(
-                  isLabelVisible: vm.pending.isNotEmpty,
-                  smallSize: 6,
-                  backgroundColor: const Color(0xFFFF8D7B),
-                  child: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: DashboardColors.mint,
-                    size: 23,
-                  ),
-                ),
+              Consumer<NotificationViewModel>(
+                builder: (context, notifVm, _) {
+                  final unread = notifVm.unreadCount;
+                  return IconButton(
+                    tooltip: 'Notificaciones',
+                    onPressed: () => NotificationsModal.show(context),
+                    icon: Badge(
+                      isLabelVisible: unread > 0,
+                      label: Text('$unread'),
+                      backgroundColor: DashboardColors.emerald,
+                      textColor: DashboardColors.background,
+                      child: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: DashboardColors.mint,
+                        size: 23,
+                      ),
+                    ),
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 18, left: 4),
@@ -559,68 +571,6 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         ),
       );
-
-  Future<void> _showNotifications(
-    BuildContext context,
-    DashboardViewModel vm,
-  ) => showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    isScrollControlled: true,
-    builder: (sheetContext) => SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * .65,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 25),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Avisos de tickets',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                vm.pending.isEmpty
-                    ? 'No hay avisos pendientes.'
-                    : '${vm.pending.length} tickets por revisar.',
-                style: const TextStyle(color: DashboardColors.muted),
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    for (final ticket in vm.pending.take(8))
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
-                          Icons.assignment_outlined,
-                          color: DashboardColors.amber,
-                        ),
-                        title: Text(
-                          ticket.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(ticket.status),
-                        onTap: () {
-                          Navigator.pop(sheetContext);
-                          context.push('/tickets/${ticket.ticketId}');
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }
 
 class _WelcomeCard extends StatelessWidget {
