@@ -12,7 +12,8 @@
 | **1** | Eduardo Ochoa Almaraz | *(Coloca tu matrícula aquí)* |
 | **2** | Gerardo Cruz Gudiño | *(Matrícula compañero 2)* |
 | **3** | Fernando Pichardo | *(Matrícula compañero 3)* |
-| **4** | *(Nombre integrante 4 / opcional)* | *(Matrícula integrante 4)* |
+| **4** | *T.S.U DURAZNO MARTINEZ MIGUEL ANGEL
+* | *(Matrícula integrante 4)* |
 
 * **Aplicación:** **Centrix** (Sistema Integral de Gestión de Tickets, Recursos y Notificaciones Push)
 * **Plataforma:** **Android** (con cliente Web complementario)
