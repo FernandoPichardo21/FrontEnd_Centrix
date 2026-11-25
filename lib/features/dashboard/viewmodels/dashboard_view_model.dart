@@ -68,20 +68,32 @@ class DashboardViewModel extends ChangeNotifier {
       ? DashboardModule.createTicket
       : DashboardModule.myTickets;
   List<DashboardModule> get homeModules {
-    final preferred = user.canViewManager
-        ? [
-            DashboardModule.managerApprovals,
-            DashboardModule.managerBudget,
-            DashboardModule.managerRequests,
-            DashboardModule.managerReports,
-          ]
-        : [
-            DashboardModule.myTickets,
-            DashboardModule.pendingTickets,
-            DashboardModule.departments,
-            DashboardModule.createUser,
-            DashboardModule.userManagement,
-          ];
+    final List<DashboardModule> preferred;
+    if (user.canCreateUser) {
+      // Administrador
+      preferred = [
+        DashboardModule.managerApprovals,
+        DashboardModule.managerBudget,
+        DashboardModule.userManagement,
+        DashboardModule.pendingTickets,
+      ];
+    } else if (user.canViewManager) {
+      // Gerente
+      preferred = [
+        DashboardModule.managerApprovals,
+        DashboardModule.managerBudget,
+        DashboardModule.managerRequests,
+        DashboardModule.managerReports,
+      ];
+    } else {
+      // Colaborador o Soporte Técnico
+      preferred = [
+        DashboardModule.myTickets,
+        DashboardModule.createResourceRequest,
+        DashboardModule.myResourceRequests,
+        DashboardModule.departments,
+      ];
+    }
     return preferred
         .where((module) => modules.contains(module) && module != primaryModule)
         .take(4)
@@ -98,12 +110,15 @@ class DashboardViewModel extends ChangeNotifier {
       DashboardModule.myTickets => count(_myTickets?.length),
       DashboardModule.pendingTickets => count(_pending?.length),
       DashboardModule.departments => count(_departmentCount),
-      DashboardModule.createTicket || DashboardModule.createUser => '+',
-      DashboardModule.userManagement => '→',
+      DashboardModule.createTicket ||
+      DashboardModule.createUser ||
+      DashboardModule.createResourceRequest => '+',
+      DashboardModule.userManagement ||
+      DashboardModule.myResourceRequests => '→',
       DashboardModule.managerApprovals ||
       DashboardModule.managerBudget ||
       DashboardModule.managerRequests ||
-      DashboardModule.managerReports => 'Demo',
+      DashboardModule.managerReports => '•',
       DashboardModule.departmentTickets => '↗',
     };
   }
@@ -177,6 +192,8 @@ class DashboardViewModel extends ChangeNotifier {
       DashboardModule.departments,
       if (user.canCreateUser) DashboardModule.createUser,
       if (user.canCreateUser) DashboardModule.userManagement,
+      if (user.canCreateResourceRequest) DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ];
   }
 

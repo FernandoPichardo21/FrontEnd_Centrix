@@ -385,7 +385,7 @@ class _BudgetDialogState extends State<_BudgetDialog> {
       ),
       FilledButton(
         key: const Key('save-manager-budget'),
-        onPressed: () {
+        onPressed: () async {
           final values = <ManagerCategory, int>{};
           for (final entry in _controllers.entries) {
             final text = entry.value.text.trim();
@@ -401,15 +401,20 @@ class _BudgetDialogState extends State<_BudgetDialog> {
             }
             values[entry.key] = (parsed * 100).round();
           }
-          final error = widget.viewModel.updateBudget(values);
+          final error = await widget.viewModel.updateBudget(values);
+          if (!context.mounted) return;
           if (error != null) {
             setState(() => _error = error);
             return;
           }
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Presupuesto actualizado en la vista previa.'),
+            SnackBar(
+              content: Text(
+                widget.viewModel.isPreview
+                    ? 'Presupuesto actualizado en la vista previa.'
+                    : 'Presupuesto actualizado correctamente.',
+              ),
             ),
           );
         },

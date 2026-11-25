@@ -51,3 +51,5 @@ app.*.map.json
 
 # Firebase configuration secrets
 android/app/google-services.json
+
+centrix_mobile/

@@ -12,6 +12,11 @@ class NotificationsModal extends StatelessWidget {
   const NotificationsModal({super.key});
 
   static Future<void> show(BuildContext context) {
+    final auth = context.read<AuthViewModel>();
+    final session = auth.session;
+    if (session != null) {
+      context.read<NotificationViewModel>().load(session.token);
+    }
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,

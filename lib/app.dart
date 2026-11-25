@@ -36,7 +36,7 @@ class CentrixApp extends StatefulWidget {
   State<CentrixApp> createState() => _CentrixAppState();
 }
 
-class _CentrixAppState extends State<CentrixApp> {
+class _CentrixAppState extends State<CentrixApp> with WidgetsBindingObserver {
   late final AuthViewModel _auth;
   late final NotificationViewModel _notificationVm;
   late final GoRouter _router;
@@ -66,16 +66,37 @@ class _CentrixAppState extends State<CentrixApp> {
     );
 
     _auth.addListener(_onAuthChanged);
+    WidgetsBinding.instance.addObserver(this);
 
-    // Configurar apertura directa del ticket desde notificaciones push
+    // Configurar apertura directa y sincronización reactiva de notificaciones push
     PushNotificationService.instance.initialize(
       onNotificationTapped: (message) {
+        final session = _auth.session;
+        if (session != null) {
+          _notificationVm.load(session.token);
+        }
         final ticketId = message.data['ticket_id']?.toString();
         if (ticketId != null && ticketId.isNotEmpty) {
           _router.push('/tickets/$ticketId');
         }
       },
+      onNotificationReceived: (message) {
+        final session = _auth.session;
+        if (session != null) {
+          _notificationVm.load(session.token);
+        }
+      },
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final session = _auth.session;
+      if (session != null) {
+        _notificationVm.load(session.token);
+      }
+    }
   }
 
   void _onAuthChanged() {
@@ -88,6 +109,7 @@ class _CentrixAppState extends State<CentrixApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _auth.removeListener(_onAuthChanged);
     _router.dispose();
     _notificationVm.dispose();
