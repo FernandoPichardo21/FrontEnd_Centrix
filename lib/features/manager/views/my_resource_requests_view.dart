@@ -62,10 +62,18 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Cancelar solicitud'),
-        content: const Text('¿Estás seguro de que deseas cancelar esta solicitud?'),
+        content: const Text(
+          '¿Estás seguro de que deseas cancelar esta solicitud?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('No')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Sí, cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('No'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sí, cancelar'),
+          ),
         ],
       ),
     );
@@ -75,14 +83,17 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
     try {
       await _api.deleteRequest(auth.session!.token, requestId);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Solicitud cancelada.')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Solicitud cancelada.')));
       _load();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}')),
+        SnackBar(
+          content: Text(
+            'Error: ${e.toString().replaceFirst('Exception: ', '')}',
+          ),
+        ),
       );
     }
   }
@@ -122,8 +133,7 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
               children: [
                 const CentrixPageHeader(
                   title: 'Mis recursos solicitados',
-                  description:
-                      'Consulta el historial de solicitudes enviadas a tu gerencia y su estado de aprobación.',
+                  description: 'Consulta el historial de solicitudes enviadas a tu gerencia y su estado de aprobación.',
                   icon: Icons.inventory_2_outlined,
                   eyebrow: 'HISTORIAL PERSONAL',
                 ),
@@ -141,9 +151,16 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         children: [
-                          const Icon(Icons.error_outline, color: CentrixColors.error, size: 36),
+                          const Icon(
+                            Icons.error_outline,
+                            color: CentrixColors.error,
+                            size: 36,
+                          ),
                           const SizedBox(height: 12),
-                          Text(_error!, style: const TextStyle(color: CentrixColors.error)),
+                          Text(
+                            _error!,
+                            style: const TextStyle(color: CentrixColors.error),
+                          ),
                           const SizedBox(height: 16),
                           OutlinedButton.icon(
                             onPressed: _load,
@@ -160,21 +177,32 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                       padding: const EdgeInsets.all(36),
                       child: Column(
                         children: [
-                          const Icon(Icons.folder_open_rounded, size: 48, color: CentrixColors.leaf),
+                          const Icon(
+                            Icons.folder_open_rounded,
+                            size: 48,
+                            color: CentrixColors.leaf,
+                          ),
                           const SizedBox(height: 16),
                           const Text(
                             'No tienes solicitudes registradas',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           const Text(
                             'Cuando solicites equipo, material o presupuesto para tu área, aparecerá aquí.',
-                            style: TextStyle(color: CentrixColors.forest, fontSize: 13),
+                            style: TextStyle(
+                              color: CentrixColors.forest,
+                              fontSize: 13,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 20),
                           FilledButton.icon(
-                            onPressed: () => context.go('/resource-requests/new'),
+                            onPressed: () =>
+                                context.go('/resource-requests/new'),
                             icon: const Icon(Icons.add_shopping_cart_rounded),
                             label: const Text('Crear primera solicitud'),
                           ),
@@ -212,29 +240,47 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.category_outlined, size: 14, color: CentrixColors.forest),
+                                    const Icon(
+                                      Icons.category_outlined,
+                                      size: 14,
+                                      color: CentrixColors.forest,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       item.category.label,
-                                      style: const TextStyle(fontSize: 12, color: CentrixColors.forest),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: CentrixColors.forest,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.calendar_today_outlined, size: 14, color: CentrixColors.forest),
+                                    const Icon(
+                                      Icons.calendar_today_outlined,
+                                      size: 14,
+                                      color: CentrixColors.forest,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       managerDate(item.date),
-                                      style: const TextStyle(fontSize: 12, color: CentrixColors.forest),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: CentrixColors.forest,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.attach_money_rounded, size: 14, color: CentrixColors.leaf),
+                                    const Icon(
+                                      Icons.attach_money_rounded,
+                                      size: 14,
+                                      color: CentrixColors.leaf,
+                                    ),
                                     Text(
                                       managerMoney(item.amountCents),
                                       style: const TextStyle(
@@ -250,25 +296,41 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                             const SizedBox(height: 12),
                             Text(
                               item.description,
-                              style: const TextStyle(fontSize: 13, color: CentrixColors.mint, height: 1.4),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: CentrixColors.mint,
+                                height: 1.4,
+                              ),
                             ),
-                            if (item.status == ManagerRequestStatus.rejected && item.comment != null) ...[
+                            if (item.status == ManagerRequestStatus.rejected &&
+                                item.comment != null) ...[
                               const SizedBox(height: 12),
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: CentrixColors.error.withValues(alpha: .12),
+                                  color: CentrixColors.error.withValues(
+                                    alpha: .12,
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: CentrixColors.error.withValues(alpha: .3)),
+                                  border: Border.all(
+                                    color: CentrixColors.error.withValues(
+                                      alpha: .3,
+                                    ),
+                                  ),
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(Icons.info_outline, color: CentrixColors.error, size: 18),
+                                    const Icon(
+                                      Icons.info_outline,
+                                      color: CentrixColors.error,
+                                      size: 18,
+                                    ),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           const Text(
                                             'Motivo del rechazo:',
@@ -281,7 +343,10 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                                           const SizedBox(height: 4),
                                           Text(
                                             item.comment!,
-                                            style: const TextStyle(fontSize: 12, color: CentrixColors.mint),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: CentrixColors.mint,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -290,16 +355,24 @@ class _MyResourceRequestsViewState extends State<MyResourceRequestsView> {
                                 ),
                               ),
                             ],
-                            if (item.status == ManagerRequestStatus.pending) ...[
+                            if (item.status ==
+                                ManagerRequestStatus.pending) ...[
                               const SizedBox(height: 12),
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: TextButton.icon(
                                   onPressed: () => _deleteRequest(item.id),
-                                  icon: const Icon(Icons.delete_outline_rounded, size: 16, color: CentrixColors.error),
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
+                                    size: 16,
+                                    color: CentrixColors.error,
+                                  ),
                                   label: const Text(
                                     'Cancelar solicitud',
-                                    style: TextStyle(color: CentrixColors.error, fontSize: 12),
+                                    style: TextStyle(
+                                      color: CentrixColors.error,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),

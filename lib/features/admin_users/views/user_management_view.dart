@@ -70,7 +70,8 @@ class _UserManagementViewState extends State<UserManagementView> {
                     const Expanded(
                       child: CentrixPageHeader(
                         title: 'Gestión de usuarios',
-                        description: 'Administra cuentas, roles y departamentos',
+                        description:
+                            'Administra cuentas, roles y departamentos',
                         icon: Icons.manage_accounts_rounded,
                         eyebrow: 'ADMINISTRACIÓN',
                       ),
@@ -86,7 +87,10 @@ class _UserManagementViewState extends State<UserManagementView> {
                     style: FilledButton.styleFrom(
                       backgroundColor: DashboardColors.mint,
                       foregroundColor: DashboardColors.background,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                     label: const Text('Nuevo usuario'),
                   ),
@@ -121,7 +125,10 @@ class _UserManagementViewState extends State<UserManagementView> {
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Buscar por nombre o correo...',
-                      prefixIcon: const Icon(Icons.search_rounded, color: DashboardColors.muted),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: DashboardColors.muted,
+                      ),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear_rounded, size: 18),
@@ -132,14 +139,21 @@ class _UserManagementViewState extends State<UserManagementView> {
                             )
                           : null,
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                        borderSide: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.12),
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                        borderSide: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.12),
+                        ),
                       ),
                     ),
                     onSubmitted: (value) => vm.setSearch(token, value),
@@ -149,9 +163,14 @@ class _UserManagementViewState extends State<UserManagementView> {
                 FilledButton(
                   onPressed: () => vm.setSearch(token, _searchController.text),
                   style: FilledButton.styleFrom(
-                    backgroundColor: DashboardColors.mint.withValues(alpha: 0.2),
+                    backgroundColor: DashboardColors.mint.withValues(
+                      alpha: 0.2,
+                    ),
                     foregroundColor: DashboardColors.mint,
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 14,
+                    ),
                   ),
                   child: const Text('Buscar'),
                 ),
@@ -165,15 +184,23 @@ class _UserManagementViewState extends State<UserManagementView> {
               children: [
                 // Filtro de Rol
                 ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 160, maxWidth: 220),
+                  constraints: const BoxConstraints(
+                    minWidth: 160,
+                    maxWidth: 220,
+                  ),
                   child: DropdownButtonFormField<String?>(
                     initialValue: vm.selectedRole,
                     isExpanded: true,
                     decoration: InputDecoration(
                       labelText: 'Rol',
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     items: [
                       const DropdownMenuItem<String?>(
@@ -197,15 +224,23 @@ class _UserManagementViewState extends State<UserManagementView> {
 
                 // Filtro de Departamento
                 ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 180, maxWidth: 260),
+                  constraints: const BoxConstraints(
+                    minWidth: 180,
+                    maxWidth: 260,
+                  ),
                   child: DropdownButtonFormField<String?>(
                     initialValue: vm.selectedDepartmentId,
                     isExpanded: true,
                     decoration: InputDecoration(
                       labelText: 'Departamento',
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     items: [
                       const DropdownMenuItem<String?>(
@@ -215,10 +250,14 @@ class _UserManagementViewState extends State<UserManagementView> {
                       for (final dept in vm.departments)
                         DropdownMenuItem<String?>(
                           value: dept.departmentId,
-                          child: Text(dept.name, overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            dept.name,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                     ],
-                    onChanged: (deptId) => vm.setDepartmentFilter(token, deptId),
+                    onChanged: (deptId) =>
+                        vm.setDepartmentFilter(token, deptId),
                   ),
                 ),
 
@@ -261,11 +300,20 @@ class _UserManagementViewState extends State<UserManagementView> {
           padding: const EdgeInsets.all(32),
           child: Column(
             children: [
-              const Icon(Icons.error_outline_rounded, size: 48, color: Color(0xFFFF8D7B)),
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 48,
+                color: Color(0xFFFF8D7B),
+              ),
               const SizedBox(height: 16),
               Text(
-                vm.requiresLogin ? 'Sesión expirada' : 'Error al cargar usuarios',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                vm.requiresLogin
+                    ? 'Sesión expirada'
+                    : 'Error al cargar usuarios',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -275,7 +323,9 @@ class _UserManagementViewState extends State<UserManagementView> {
               ),
               const SizedBox(height: 20),
               FilledButton(
-                onPressed: vm.requiresLogin ? auth.logout : () => vm.loadInitial(token),
+                onPressed: vm.requiresLogin
+                    ? auth.logout
+                    : () => vm.loadInitial(token),
                 child: Text(vm.requiresLogin ? 'Iniciar sesión' : 'Reintentar'),
               ),
             ],
@@ -290,7 +340,11 @@ class _UserManagementViewState extends State<UserManagementView> {
           padding: const EdgeInsets.all(40),
           child: Column(
             children: [
-              const Icon(Icons.group_off_rounded, size: 54, color: DashboardColors.muted),
+              const Icon(
+                Icons.group_off_rounded,
+                size: 54,
+                color: DashboardColors.muted,
+              ),
               const SizedBox(height: 16),
               const Text(
                 'No se encontraron usuarios',
@@ -318,11 +372,9 @@ class _UserManagementViewState extends State<UserManagementView> {
 
     return Column(
       children: [
-        for (final user in vm.users)
-          _buildUserCard(context, vm, user, token),
+        for (final user in vm.users) _buildUserCard(context, vm, user, token),
         const SizedBox(height: 12),
-        if (vm.pagination != null)
-          _buildPaginationBar(context, vm, token),
+        if (vm.pagination != null) _buildPaginationBar(context, vm, token),
       ],
     );
   }
@@ -350,7 +402,10 @@ class _UserManagementViewState extends State<UserManagementView> {
               foregroundColor: roleColor,
               child: Text(
                 user.initials,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -360,12 +415,18 @@ class _UserManagementViewState extends State<UserManagementView> {
                 children: [
                   Text(
                     user.displayName,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     user.email,
-                    style: const TextStyle(color: DashboardColors.muted, fontSize: 13),
+                    style: const TextStyle(
+                      color: DashboardColors.muted,
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Wrap(
@@ -373,9 +434,13 @@ class _UserManagementViewState extends State<UserManagementView> {
                     runSpacing: 4,
                     children: [
                       _buildRoleChip(user.role, roleColor),
-                      if (user.departmentId != null && user.departmentId!.isNotEmpty)
+                      if (user.departmentId != null &&
+                          user.departmentId!.isNotEmpty)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.07),
                             borderRadius: BorderRadius.circular(12),
@@ -392,7 +457,11 @@ class _UserManagementViewState extends State<UserManagementView> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.phone_outlined, size: 13, color: DashboardColors.muted),
+                            const Icon(
+                              Icons.phone_outlined,
+                              size: 13,
+                              color: DashboardColors.muted,
+                            ),
                             const SizedBox(width: 3),
                             Text(
                               phone,
@@ -422,7 +491,8 @@ class _UserManagementViewState extends State<UserManagementView> {
                   tooltip: 'Eliminar usuario',
                   icon: const Icon(Icons.delete_outline_rounded, size: 20),
                   color: const Color(0xFFFF8D7B),
-                  onPressed: () => _showDeleteConfirmDialog(context, vm, user, token),
+                  onPressed: () =>
+                      _showDeleteConfirmDialog(context, vm, user, token),
                 ),
               ],
             ),
@@ -465,7 +535,10 @@ class _UserManagementViewState extends State<UserManagementView> {
           children: [
             Text(
               'Total: ${pag.total} usuarios · Página ${pag.page} de ${pag.totalPages == 0 ? 1 : pag.totalPages}',
-              style: const TextStyle(color: DashboardColors.muted, fontSize: 13),
+              style: const TextStyle(
+                color: DashboardColors.muted,
+                fontSize: 13,
+              ),
             ),
             Row(
               children: [
@@ -478,7 +551,10 @@ class _UserManagementViewState extends State<UserManagementView> {
                 ),
                 Text(
                   '${pag.page}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
                 IconButton(
                   tooltip: 'Página siguiente',
@@ -504,7 +580,9 @@ class _UserManagementViewState extends State<UserManagementView> {
     final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: user.nombre);
     final lastNameCtrl = TextEditingController(text: user.apellidoPat ?? '');
-    final secondLastNameCtrl = TextEditingController(text: user.apellidoMat ?? '');
+    final secondLastNameCtrl = TextEditingController(
+      text: user.apellidoMat ?? '',
+    );
     final phoneCtrl = TextEditingController(text: user.tel ?? '');
     String selectedRole = user.role;
     String? selectedDeptId = user.departmentId;
@@ -539,17 +617,23 @@ class _UserManagementViewState extends State<UserManagementView> {
                     TextFormField(
                       controller: nameCtrl,
                       decoration: const InputDecoration(labelText: 'Nombre *'),
-                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Ingresa el nombre' : null,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Ingresa el nombre'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: lastNameCtrl,
-                      decoration: const InputDecoration(labelText: 'Primer apellido'),
+                      decoration: const InputDecoration(
+                        labelText: 'Primer apellido',
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: secondLastNameCtrl,
-                      decoration: const InputDecoration(labelText: 'Segundo apellido'),
+                      decoration: const InputDecoration(
+                        labelText: 'Segundo apellido',
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -588,7 +672,9 @@ class _UserManagementViewState extends State<UserManagementView> {
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String?>(
                         initialValue: selectedDeptId,
-                        decoration: const InputDecoration(labelText: 'Departamento'),
+                        decoration: const InputDecoration(
+                          labelText: 'Departamento',
+                        ),
                         items: [
                           const DropdownMenuItem<String?>(
                             value: null,
@@ -600,7 +686,8 @@ class _UserManagementViewState extends State<UserManagementView> {
                               child: Text(d.name),
                             ),
                         ],
-                        onChanged: (val) => setDialogState(() => selectedDeptId = val),
+                        onChanged: (val) =>
+                            setDialogState(() => selectedDeptId = val),
                       ),
                     ],
                   ],
@@ -610,7 +697,9 @@ class _UserManagementViewState extends State<UserManagementView> {
           ),
           actions: [
             TextButton(
-              onPressed: vm.isActionLoading ? null : () => Navigator.pop(dialogCtx),
+              onPressed: vm.isActionLoading
+                  ? null
+                  : () => Navigator.pop(dialogCtx),
               child: const Text('Cancelar'),
             ),
             FilledButton(
@@ -626,9 +715,15 @@ class _UserManagementViewState extends State<UserManagementView> {
                         user.id,
                         UpdateUserRequest(
                           nombre: nameCtrl.text,
-                          apellidoPat: lastNameCtrl.text.isNotEmpty ? lastNameCtrl.text : null,
-                          apellidoMat: secondLastNameCtrl.text.isNotEmpty ? secondLastNameCtrl.text : null,
-                          tel: phoneCtrl.text.isNotEmpty ? phoneCtrl.text : null,
+                          apellidoPat: lastNameCtrl.text.isNotEmpty
+                              ? lastNameCtrl.text
+                              : null,
+                          apellidoMat: secondLastNameCtrl.text.isNotEmpty
+                              ? secondLastNameCtrl.text
+                              : null,
+                          tel: phoneCtrl.text.isNotEmpty
+                              ? phoneCtrl.text
+                              : null,
                           role: selectedRole,
                           departmentId: selectedDeptId,
                         ),
@@ -693,19 +788,21 @@ class _UserManagementViewState extends State<UserManagementView> {
     );
   }
 
-  static String _labelForRole(String role) => switch (role.toLowerCase().trim()) {
-    'administrador' => 'Administrador',
-    'gerente' => 'Gerente',
-    'soporte_tecnico' => 'Soporte técnico',
-    'colaborador' => 'Colaborador',
-    _ => role,
-  };
+  static String _labelForRole(String role) =>
+      switch (role.toLowerCase().trim()) {
+        'administrador' => 'Administrador',
+        'gerente' => 'Gerente',
+        'soporte_tecnico' => 'Soporte técnico',
+        'colaborador' => 'Colaborador',
+        _ => role,
+      };
 
-  static Color _colorForRole(String role) => switch (role.toLowerCase().trim()) {
-    'administrador' => const Color(0xFF9F7AEA),
-    'gerente' => const Color(0xFF63B3ED),
-    'soporte_tecnico' => DashboardColors.mint,
-    'colaborador' => const Color(0xFFCBD5E0),
-    _ => Colors.white,
-  };
+  static Color _colorForRole(String role) =>
+      switch (role.toLowerCase().trim()) {
+        'administrador' => const Color(0xFF9F7AEA),
+        'gerente' => const Color(0xFF63B3ED),
+        'soporte_tecnico' => DashboardColors.mint,
+        'colaborador' => const Color(0xFFCBD5E0),
+        _ => Colors.white,
+      };
 }

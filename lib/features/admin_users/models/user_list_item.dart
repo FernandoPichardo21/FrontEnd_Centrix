@@ -25,15 +25,24 @@ class UserListItem {
 
   String get displayName {
     if (fullName.trim().isNotEmpty) return fullName.trim();
-    final parts = [nombre, apellidoPat, apellidoMat].whereType<String>().where((s) => s.trim().isNotEmpty);
+    final parts = [
+      nombre,
+      apellidoPat,
+      apellidoMat,
+    ].whereType<String>().where((s) => s.trim().isNotEmpty);
     if (parts.isNotEmpty) return parts.join(' ');
     return email;
   }
 
   String get initials {
-    final names = displayName.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
+    final names = displayName
+        .split(RegExp(r'\s+'))
+        .where((s) => s.isNotEmpty)
+        .toList();
     if (names.isEmpty) return 'U';
-    if (names.length == 1) return names[0].substring(0, names[0].length >= 2 ? 2 : 1).toUpperCase();
+    if (names.length == 1) {
+      return names[0].substring(0, names[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
     return '${names[0][0]}${names[1][0]}'.toUpperCase();
   }
 
@@ -56,13 +65,16 @@ class UserListItem {
       nombre: json['nombre'] as String? ?? '',
       apellidoPat: json['apellido_pat'] as String?,
       apellidoMat: json['apellido_mat'] as String?,
-      fullName: json['fullName'] as String? ?? json['full_name'] as String? ?? '',
+      fullName:
+          json['fullName'] as String? ?? json['full_name'] as String? ?? '',
       email: json['email'] as String? ?? '',
       tel: json['tel'] as String?,
-      departmentId: json['departmentId'] as String? ?? json['department_id'] as String?,
-      role: json['role'] as String? ?? (rolesList.isNotEmpty ? rolesList.first : 'colaborador'),
+      departmentId:
+          json['departmentId'] as String? ?? json['department_id'] as String?,
+      role:
+          json['role'] as String? ??
+          (rolesList.isNotEmpty ? rolesList.first : 'colaborador'),
       roles: rolesList,
     );
   }
 }
-

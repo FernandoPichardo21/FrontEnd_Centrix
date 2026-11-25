@@ -401,7 +401,7 @@ class _BudgetDialogState extends State<_BudgetDialog> {
             }
             values[entry.key] = (parsed * 100).round();
           }
-          final error = await widget.viewModel.updateBudget(values);
+          final error = widget.viewModel.updateBudget(values);
           if (!context.mounted) return;
           if (error != null) {
             setState(() => _error = error);

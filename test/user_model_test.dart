@@ -77,7 +77,7 @@ void main() {
                       'email': 'carlos@centrix.com',
                       'role': 'soporte_tecnico',
                       'department_id': 'dep-soporte',
-                    }
+                    },
                   ],
                   'pagination': {
                     'total': 1,

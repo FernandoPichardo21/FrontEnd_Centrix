@@ -24,4 +24,3 @@ class UpdateUserRequest {
     if (departmentId != null) 'department_id': departmentId,
   };
 }
-

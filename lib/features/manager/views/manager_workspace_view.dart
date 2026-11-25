@@ -36,9 +36,9 @@ class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
         final auth = context.read<AuthViewModel>();
         if (auth.isAuthenticated) {
           context.read<ManagerViewModel>().load(
-                auth.session!.token,
-                departmentId: auth.session!.user.departmentId,
-              );
+            auth.session!.token,
+            departmentId: auth.session!.user.departmentId,
+          );
         }
       });
     }
@@ -67,7 +67,11 @@ class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
                 },
                 child: Row(
                   children: [
-                    const Icon(Icons.apartment_rounded, size: 18, color: CentrixColors.leaf),
+                    const Icon(
+                      Icons.apartment_rounded,
+                      size: 18,
+                      color: CentrixColors.leaf,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(child: Text(dept.name)),
                   ],
@@ -100,7 +104,10 @@ class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
               const SizedBox(width: 18),
               Text(
                 isAdmin ? 'Supervisión de Departamentos' : 'Espacio de Gerente',
-                style: const TextStyle(fontSize: 13, color: CentrixColors.forest),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: CentrixColors.forest,
+                ),
               ),
             ],
           ],
@@ -132,27 +139,38 @@ class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
             if (isAdmin)
               TextButton.icon(
                 onPressed: () => _showDepartmentSelector(context),
-                icon: const Icon(Icons.swap_horiz_rounded, size: 18, color: CentrixColors.leaf),
+                icon: const Icon(
+                  Icons.swap_horiz_rounded,
+                  size: 18,
+                  color: CentrixColors.leaf,
+                ),
                 label: Text(
                   vm.departmentName,
-                  style: const TextStyle(color: CentrixColors.mint, fontSize: 12),
+                  style: const TextStyle(
+                    color: CentrixColors.mint,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             IconButton(
               tooltip: 'Actualizar datos',
               onPressed: auth.session?.token != null
                   ? () => vm.load(
-                        auth.session!.token,
-                        departmentId: vm.departmentId ?? auth.session!.user.departmentId,
-                      )
+                      auth.session!.token,
+                      departmentId:
+                          vm.departmentId ?? auth.session!.user.departmentId,
+                    )
                   : null,
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
           IconButton(
             key: const Key('exit-manager-preview'),
-            tooltip: widget.isPreview ? 'Salir de vista previa' : 'Volver al inicio',
-            onPressed: () => context.go(auth.isAuthenticated ? '/home' : '/login'),
+            tooltip: widget.isPreview
+                ? 'Salir de vista previa'
+                : 'Volver al inicio',
+            onPressed: () =>
+                context.go(auth.isAuthenticated ? '/home' : '/login'),
             icon: const Icon(Icons.exit_to_app_rounded),
           ),
           const SizedBox(width: 8),
@@ -237,21 +255,32 @@ class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
                         )
                       else if (vm.errorMessage != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
                             color: CentrixColors.error.withValues(alpha: .15),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: CentrixColors.error.withValues(alpha: .4)),
+                            border: Border.all(
+                              color: CentrixColors.error.withValues(alpha: .4),
+                            ),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.error_outline, color: CentrixColors.error),
+                              const Icon(
+                                Icons.error_outline,
+                                color: CentrixColors.error,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   vm.errorMessage!,
-                                  style: const TextStyle(color: CentrixColors.error, fontSize: 13),
+                                  style: const TextStyle(
+                                    color: CentrixColors.error,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
                               TextButton(
@@ -305,8 +334,12 @@ class _ManagerNavigation extends StatelessWidget {
     final user = auth.session?.user;
     final displayName = isPreview
         ? 'Gerente de ejemplo'
-        : (user?.fullName.trim().isNotEmpty == true ? user!.fullName : 'Gerente');
-    final deptName = isPreview ? ManagerDemoModel.department : vm.departmentName;
+        : (user?.fullName.trim().isNotEmpty == true
+              ? user!.fullName
+              : 'Gerente');
+    final deptName = isPreview
+        ? ManagerDemoModel.department
+        : vm.departmentName;
 
     return CentrixGlass(
       dark: true,
@@ -325,7 +358,9 @@ class _ManagerNavigation extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  (user?.hasAnyRole(['administrador']) ?? false) ? 'ADMIN' : 'GERENTE',
+                  (user?.hasAnyRole(['administrador']) ?? false)
+                      ? 'ADMIN'
+                      : 'GERENTE',
                   style: const TextStyle(
                     color: CentrixColors.mint,
                     fontSize: 11,
@@ -393,7 +428,8 @@ class _ManagerNavigation extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (item == ManagerSection.approvals && vm.pending.isNotEmpty)
+                          if (item == ManagerSection.approvals &&
+                              vm.pending.isNotEmpty)
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 7,
@@ -476,7 +512,10 @@ class _ManagerNavigation extends StatelessWidget {
                 Expanded(
                   child: Text(
                     displayName,
-                    style: const TextStyle(color: CentrixColors.mint, fontSize: 11),
+                    style: const TextStyle(
+                      color: CentrixColors.mint,
+                      fontSize: 11,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

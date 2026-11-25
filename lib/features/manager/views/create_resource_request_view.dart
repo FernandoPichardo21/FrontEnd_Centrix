@@ -12,7 +12,8 @@ class CreateResourceRequestView extends StatefulWidget {
   const CreateResourceRequestView({super.key});
 
   @override
-  State<CreateResourceRequestView> createState() => _CreateResourceRequestViewState();
+  State<CreateResourceRequestView> createState() =>
+      _CreateResourceRequestViewState();
 }
 
 class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
@@ -26,12 +27,36 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
   String? _error;
 
   static const _categories = [
-    {'value': 'Equipo', 'label': 'Equipo (Cómputo, laptops, periféricos)', 'icon': Icons.devices_rounded},
-    {'value': 'Mobiliario', 'label': 'Mobiliario (Sillas, escritorios, estantes)', 'icon': Icons.chair_outlined},
-    {'value': 'Material', 'label': 'Material e Insumos operativos', 'icon': Icons.inventory_2_outlined},
-    {'value': 'Papeleria', 'label': 'Papelería y consumibles de oficina', 'icon': Icons.edit_note_rounded},
-    {'value': 'Economico', 'label': 'Recurso económico o viáticos', 'icon': Icons.payments_outlined},
-    {'value': 'Otro', 'label': 'Otro tipo de recurso', 'icon': Icons.more_horiz_rounded},
+    {
+      'value': 'Equipo',
+      'label': 'Equipo (Cómputo, laptops, periféricos)',
+      'icon': Icons.devices_rounded,
+    },
+    {
+      'value': 'Mobiliario',
+      'label': 'Mobiliario (Sillas, escritorios, estantes)',
+      'icon': Icons.chair_outlined,
+    },
+    {
+      'value': 'Material',
+      'label': 'Material e Insumos operativos',
+      'icon': Icons.inventory_2_outlined,
+    },
+    {
+      'value': 'Papeleria',
+      'label': 'Papelería y consumibles de oficina',
+      'icon': Icons.edit_note_rounded,
+    },
+    {
+      'value': 'Economico',
+      'label': 'Recurso económico o viáticos',
+      'icon': Icons.payments_outlined,
+    },
+    {
+      'value': 'Otro',
+      'label': 'Otro tipo de recurso',
+      'icon': Icons.more_horiz_rounded,
+    },
   ];
 
   @override
@@ -108,8 +133,7 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
               children: [
                 const CentrixPageHeader(
                   title: 'Nueva solicitud de recurso',
-                  description:
-                      'Describe el material, equipo o presupuesto necesario para que tu gerencia lo revise.',
+                  description: 'Describe el material, equipo o presupuesto necesario para que tu gerencia lo revise.',
                   icon: Icons.add_shopping_cart_rounded,
                   eyebrow: 'RECURSOS Y PRESUPUESTO',
                 ),
@@ -126,18 +150,27 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: CentrixColors.error.withValues(alpha: .15),
+                                color: CentrixColors.error.withValues(
+                                  alpha: .15,
+                                ),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: CentrixColors.error),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.error_outline, color: CentrixColors.error, size: 20),
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: CentrixColors.error,
+                                    size: 20,
+                                  ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       _error!,
-                                      style: const TextStyle(color: CentrixColors.error, fontSize: 13),
+                                      style: const TextStyle(
+                                        color: CentrixColors.error,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -152,12 +185,13 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                               hintText: 'Ej. Laptop para soporte, Renovación de licencias...',
                               prefixIcon: Icon(Icons.title_rounded),
                             ),
-                            validator: (v) =>
-                                (v == null || v.trim().isEmpty) ? 'Ingresa el concepto de la solicitud' : null,
+                            validator: (v) => (v == null || v.trim().isEmpty)
+                                ? 'Ingresa el concepto de la solicitud'
+                                : null,
                           ),
                           const SizedBox(height: 18),
                           DropdownButtonFormField<String>(
-                            value: _selectedCategory,
+                            initialValue: _selectedCategory,
                             isExpanded: true,
                             decoration: const InputDecoration(
                               labelText: 'Categoría *',
@@ -168,7 +202,11 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                                 value: c['value'] as String,
                                 child: Row(
                                   children: [
-                                    Icon(c['icon'] as IconData, size: 18, color: CentrixColors.leaf),
+                                    Icon(
+                                      c['icon'] as IconData,
+                                      size: 18,
+                                      color: CentrixColors.leaf,
+                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
@@ -181,13 +219,17 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                               );
                             }).toList(),
                             onChanged: (val) {
-                              if (val != null) setState(() => _selectedCategory = val);
+                              if (val != null) {
+                                setState(() => _selectedCategory = val);
+                              }
                             },
                           ),
                           const SizedBox(height: 18),
                           TextFormField(
                             controller: _amountController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
                             decoration: const InputDecoration(
                               labelText: 'Monto estimado (MXN) *',
                               hintText: '0.00',
@@ -211,12 +253,14 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                             controller: _descriptionController,
                             maxLines: 4,
                             decoration: const InputDecoration(
-                              labelText: 'Justificación / Descripción detallada *',
+                              labelText:
+                                  'Justificación / Descripción detallada *',
                               hintText: 'Explica por qué es necesario este recurso y el impacto en tu área...',
                               alignLabelWithHint: true,
                             ),
-                            validator: (v) =>
-                                (v == null || v.trim().isEmpty) ? 'Describe la justificación del recurso' : null,
+                            validator: (v) => (v == null || v.trim().isEmpty)
+                                ? 'Describe la justificación del recurso'
+                                : null,
                           ),
                           const SizedBox(height: 28),
                           FilledButton.icon(
@@ -225,10 +269,17 @@ class _CreateResourceRequestViewState extends State<CreateResourceRequestView> {
                                 ? const SizedBox(
                                     width: 18,
                                     height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
                                   )
                                 : const Icon(Icons.send_rounded),
-                            label: Text(_isLoading ? 'Enviando solicitud...' : 'Enviar solicitud'),
+                            label: Text(
+                              _isLoading
+                                  ? 'Enviando solicitud...'
+                                  : 'Enviar solicitud',
+                            ),
                           ),
                         ],
                       ),

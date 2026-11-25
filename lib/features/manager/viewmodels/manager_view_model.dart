@@ -32,7 +32,7 @@ class ManagerViewModel extends ChangeNotifier {
   int _reportMonth = 11;
 
   bool _isLoading = false;
-  bool _isSaving = false;
+  final bool _isSaving = false;
   String? _errorMessage;
   String? _authToken;
   String? _departmentId;
@@ -51,7 +51,8 @@ class ManagerViewModel extends ChangeNotifier {
       .where((r) => r.status == ManagerRequestStatus.pending)
       .toList();
   ManagerRequest? get selected =>
-      _requests.where((r) => r.id == _selectedId).firstOrNull ?? _requests.firstOrNull;
+      _requests.where((r) => r.id == _selectedId).firstOrNull ??
+      _requests.firstOrNull;
   ManagerRequestStatus? get statusFilter => _statusFilter;
   ManagerCategory? get categoryFilter => _categoryFilter;
   int get reportMonth => _reportMonth;
@@ -60,9 +61,9 @@ class ManagerViewModel extends ChangeNotifier {
 
   int get budget => _allocations.values.fold(0, (sum, value) => sum + value);
   int get spent => ManagerCategory.values.fold(
-        0,
-        (sum, category) => sum + categorySpent(category),
-      );
+    0,
+    (sum, category) => sum + categorySpent(category),
+  );
   int get available => budget > spent ? budget - spent : 0;
   int get pendingAmount => pending.fold(0, (sum, r) => sum + r.amountCents);
 
@@ -84,14 +85,16 @@ class ManagerViewModel extends ChangeNotifier {
   }
 
   List<ManagerRequest> get filteredRequests => _requests.where((r) {
-        final matchesStatus = _statusFilter == null || r.status == _statusFilter;
-        final matchesCategory = _categoryFilter == null || r.category == _categoryFilter;
-        final matchesSearch = _search.trim().isEmpty ||
-            '${r.id} ${r.title} ${r.applicant}'.toLowerCase().contains(
-                  _search.toLowerCase().trim(),
-                );
-        return matchesStatus && matchesCategory && matchesSearch;
-      }).toList();
+    final matchesStatus = _statusFilter == null || r.status == _statusFilter;
+    final matchesCategory =
+        _categoryFilter == null || r.category == _categoryFilter;
+    final matchesSearch =
+        _search.trim().isEmpty ||
+        '${r.id} ${r.title} ${r.applicant}'.toLowerCase().contains(
+          _search.toLowerCase().trim(),
+        );
+    return matchesStatus && matchesCategory && matchesSearch;
+  }).toList();
 
   List<ManagerRequest> get reportRequests =>
       _requests.where((r) => r.date.month == _reportMonth).toList();
@@ -129,7 +132,11 @@ class ManagerViewModel extends ChangeNotifier {
   void selectReportMonth(int month) {
     _reportMonth = month;
     if (!isPreview && _authToken != null) {
-      load(_authToken!, departmentId: _departmentId, departmentName: _departmentName);
+      load(
+        _authToken!,
+        departmentId: _departmentId,
+        departmentName: _departmentName,
+      );
     } else {
       notifyListeners();
     }
@@ -145,10 +152,16 @@ class ManagerViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> load(String token, {String? departmentId, String? departmentName}) async {
+  Future<void> load(
+    String token, {
+    String? departmentId,
+    String? departmentName,
+  }) async {
     _authToken = token;
     if (departmentId != null) _departmentId = departmentId;
-    if (departmentName != null && departmentName.isNotEmpty) _departmentName = departmentName;
+    if (departmentName != null && departmentName.isNotEmpty) {
+      _departmentName = departmentName;
+    }
 
     if (isPreview) return;
 
@@ -236,17 +249,26 @@ class ManagerViewModel extends ChangeNotifier {
     notifyListeners();
 
     if (!isPreview && _authToken != null) {
-      _apiService.decideRequest(
-        _authToken!,
-        requestId: request.id,
-        status: decision == ManagerRequestStatus.approved ? 'Aprobada' : 'Rechazada',
-        comment: comment.trim(),
-      ).then((_) {
-        load(_authToken!, departmentId: _departmentId, departmentName: _departmentName);
-      }).catchError((e) {
-        _errorMessage = e.toString().replaceFirst('Exception: ', '');
-        notifyListeners();
-      });
+      _apiService
+          .decideRequest(
+            _authToken!,
+            requestId: request.id,
+            status: decision == ManagerRequestStatus.approved
+                ? 'Aprobada'
+                : 'Rechazada',
+            comment: comment.trim(),
+          )
+          .then((_) {
+            load(
+              _authToken!,
+              departmentId: _departmentId,
+              departmentName: _departmentName,
+            );
+          })
+          .catchError((e) {
+            _errorMessage = e.toString().replaceFirst('Exception: ', '');
+            notifyListeners();
+          });
     }
 
     return null;
@@ -269,18 +291,25 @@ class ManagerViewModel extends ChangeNotifier {
         backendAllocations[entry.key.toBackendCategory()] = entry.value;
       }
 
-      _apiService.updateBudget(
-        _authToken!,
-        departmentId: _departmentId,
-        month: _reportMonth,
-        year: DateTime.now().year,
-        allocations: backendAllocations,
-      ).then((_) {
-        load(_authToken!, departmentId: _departmentId, departmentName: _departmentName);
-      }).catchError((e) {
-        _errorMessage = e.toString().replaceFirst('Exception: ', '');
-        notifyListeners();
-      });
+      _apiService
+          .updateBudget(
+            _authToken!,
+            departmentId: _departmentId,
+            month: _reportMonth,
+            year: DateTime.now().year,
+            allocations: backendAllocations,
+          )
+          .then((_) {
+            load(
+              _authToken!,
+              departmentId: _departmentId,
+              departmentName: _departmentName,
+            );
+          })
+          .catchError((e) {
+            _errorMessage = e.toString().replaceFirst('Exception: ', '');
+            notifyListeners();
+          });
     }
 
     return null;

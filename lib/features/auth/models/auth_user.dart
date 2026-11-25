@@ -38,8 +38,12 @@ class AuthUser {
   bool get canCreateUser => hasAnyRole(const ['administrador']);
   bool get canViewUsers => hasAnyRole(const ['administrador']);
   bool get canViewManager => hasAnyRole(const ['gerente', 'administrador']);
-  bool get canCreateResourceRequest =>
-      hasAnyRole(const ['colaborador', 'gerente', 'administrador', 'soporte_tecnico']);
+  bool get canCreateResourceRequest => hasAnyRole(const [
+    'colaborador',
+    'gerente',
+    'administrador',
+    'soporte_tecnico',
+  ]);
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     return AuthUser(

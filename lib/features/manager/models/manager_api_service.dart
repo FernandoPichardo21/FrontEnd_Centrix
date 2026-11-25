@@ -21,12 +21,13 @@ class ManagerApiService {
     try {
       final queryParams = <String, dynamic>{
         'limit': 100,
-        if (departmentId != null && departmentId.isNotEmpty) 'department_id': departmentId,
+        if (departmentId != null && departmentId.isNotEmpty)
+          'department_id': departmentId,
         if (status != null && status.isNotEmpty) 'status': status,
         if (category != null && category.isNotEmpty) 'category': category,
         if (search != null && search.isNotEmpty) 'search': search,
-        if (month != null) 'month': month,
-        if (year != null) 'year': year,
+        'month': ?month,
+        'year': ?year,
       };
 
       final response = await _dio.get<Map<String, dynamic>>(
@@ -43,11 +44,15 @@ class ManagerApiService {
       final dataMap = Map<String, dynamic>.from(body['data'] as Map);
       final items = (dataMap['items'] as List<dynamic>? ?? []);
       return items
-          .map((item) => ManagerRequest.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) =>
+                ManagerRequest.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
           .toList();
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al cargar solicitudes del departamento.',
+        e.response?.data?['message']?.toString() ??
+            'Error al cargar solicitudes del departamento.',
         statusCode: e.response?.statusCode,
       );
     }
@@ -61,9 +66,10 @@ class ManagerApiService {
   }) async {
     try {
       final queryParams = <String, dynamic>{
-        if (departmentId != null && departmentId.isNotEmpty) 'department_id': departmentId,
-        if (month != null) 'month': month,
-        if (year != null) 'year': year,
+        if (departmentId != null && departmentId.isNotEmpty)
+          'department_id': departmentId,
+        'month': ?month,
+        'year': ?year,
       };
 
       final response = await _dio.get<Map<String, dynamic>>(
@@ -74,13 +80,16 @@ class ManagerApiService {
 
       final body = response.data;
       if (body == null || body['success'] != true || body['data'] is! Map) {
-        throw const ApiException('Respuesta inesperada al consultar presupuesto.');
+        throw const ApiException(
+          'Respuesta inesperada al consultar presupuesto.',
+        );
       }
 
       return Map<String, dynamic>.from(body['data'] as Map);
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al consultar presupuesto.',
+        e.response?.data?['message']?.toString() ??
+            'Error al consultar presupuesto.',
         statusCode: e.response?.statusCode,
       );
     }
@@ -97,9 +106,10 @@ class ManagerApiService {
       final response = await _dio.put<Map<String, dynamic>>(
         '/api/resource-requests/department/budget',
         data: {
-          if (departmentId != null && departmentId.isNotEmpty) 'department_id': departmentId,
-          if (month != null) 'month': month,
-          if (year != null) 'year': year,
+          if (departmentId != null && departmentId.isNotEmpty)
+            'department_id': departmentId,
+          'month': ?month,
+          'year': ?year,
           'allocations': allocations,
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -107,13 +117,16 @@ class ManagerApiService {
 
       final body = response.data;
       if (body == null || body['success'] != true || body['data'] is! Map) {
-        throw const ApiException('Respuesta inesperada al actualizar presupuesto.');
+        throw const ApiException(
+          'Respuesta inesperada al actualizar presupuesto.',
+        );
       }
 
       return Map<String, dynamic>.from(body['data'] as Map);
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al actualizar presupuesto.',
+        e.response?.data?['message']?.toString() ??
+            'Error al actualizar presupuesto.',
         statusCode: e.response?.statusCode,
       );
     }
@@ -141,7 +154,8 @@ class ManagerApiService {
       }
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al registrar decisión.',
+        e.response?.data?['message']?.toString() ??
+            'Error al registrar decisión.',
         statusCode: e.response?.statusCode,
       );
     }
@@ -155,9 +169,10 @@ class ManagerApiService {
   }) async {
     try {
       final queryParams = <String, dynamic>{
-        if (departmentId != null && departmentId.isNotEmpty) 'department_id': departmentId,
-        if (month != null) 'month': month,
-        if (year != null) 'year': year,
+        if (departmentId != null && departmentId.isNotEmpty)
+          'department_id': departmentId,
+        'month': ?month,
+        'year': ?year,
       };
 
       final response = await _dio.get<Map<String, dynamic>>(
@@ -193,11 +208,15 @@ class ManagerApiService {
       }
 
       return (body['data'] as List)
-          .map((item) => ManagerRequest.fromJson(Map<String, dynamic>.from(item as Map)))
+          .map(
+            (item) =>
+                ManagerRequest.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
           .toList();
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al consultar mis solicitudes.',
+        e.response?.data?['message']?.toString() ??
+            'Error al consultar mis solicitudes.',
         statusCode: e.response?.statusCode,
       );
     }
@@ -219,7 +238,8 @@ class ManagerApiService {
           'description': description,
           'category': category,
           'estimated_amount': estimatedAmount,
-          if (departmentId != null && departmentId.isNotEmpty) 'department_id': departmentId,
+          if (departmentId != null && departmentId.isNotEmpty)
+            'department_id': departmentId,
         },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -251,7 +271,8 @@ class ManagerApiService {
       }
     } on DioException catch (e) {
       throw ApiException(
-        e.response?.data?['message']?.toString() ?? 'Error al cancelar solicitud.',
+        e.response?.data?['message']?.toString() ??
+            'Error al cancelar solicitud.',
         statusCode: e.response?.statusCode,
       );
     }

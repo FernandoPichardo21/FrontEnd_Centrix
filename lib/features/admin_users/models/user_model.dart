@@ -97,10 +97,7 @@ class UserModel {
     String? departmentId,
   }) async {
     try {
-      final queryParams = <String, dynamic>{
-        'page': page,
-        'limit': limit,
-      };
+      final queryParams = <String, dynamic>{'page': page, 'limit': limit};
       if (search != null && search.trim().isNotEmpty) {
         queryParams['search'] = search.trim();
       }
@@ -120,7 +117,9 @@ class UserModel {
       if (body == null || body['success'] != true || body['data'] is! Map) {
         throw const ApiException('Respuesta inesperada del servidor.');
       }
-      return UsersResponse.fromJson(Map<String, dynamic>.from(body['data'] as Map));
+      return UsersResponse.fromJson(
+        Map<String, dynamic>.from(body['data'] as Map),
+      );
     } on DioException catch (error) {
       final statusCode = error.response?.statusCode;
       if (statusCode == 401) {
@@ -144,7 +143,9 @@ class UserModel {
         statusCode: statusCode,
       );
     } on TypeError {
-      throw const ApiException('Respuesta inesperada al procesar los usuarios.');
+      throw const ApiException(
+        'Respuesta inesperada al procesar los usuarios.',
+      );
     }
   }
 
@@ -197,10 +198,7 @@ class UserModel {
     }
   }
 
-  Future<void> deleteUser(
-    String id,
-    String token,
-  ) async {
+  Future<void> deleteUser(String id, String token) async {
     try {
       final response = await _dio.delete<Map<String, dynamic>>(
         '/api/users/$id',

@@ -26,13 +26,16 @@ extension DashboardModuleInfo on DashboardModule {
     DashboardModule.departmentTickets => 'Incidencias de tu departamento',
     DashboardModule.departments => 'Conoce a las áreas de tu equipo',
     DashboardModule.createUser => 'Agrega una cuenta al equipo',
-    DashboardModule.userManagement => 'Administra cuentas, roles y departamentos',
+    DashboardModule.userManagement =>
+      'Administra cuentas, roles y departamentos',
     DashboardModule.managerApprovals => 'Revisa solicitudes de tu equipo',
     DashboardModule.managerBudget => 'Recursos y presupuesto del área',
     DashboardModule.managerRequests => 'Movimientos del equipo',
     DashboardModule.managerReports => 'Resultados y métricas del área',
-    DashboardModule.createResourceRequest => 'Solicita equipo, material o presupuesto',
-    DashboardModule.myResourceRequests => 'Consulta el estado de tus solicitudes',
+    DashboardModule.createResourceRequest =>
+      'Solicita equipo, material o presupuesto',
+    DashboardModule.myResourceRequests =>
+      'Consulta el estado de tus solicitudes',
   };
 
   IconData get icon => switch (this) {

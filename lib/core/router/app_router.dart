@@ -107,10 +107,7 @@ GoRouter createAppRouter(
         child: child,
       ),
       routes: [
-        GoRoute(
-          path: '/gerente',
-          redirect: (_, _) => '/gerente/aprobaciones',
-        ),
+        GoRoute(path: '/gerente', redirect: (_, _) => '/gerente/aprobaciones'),
         for (final section in ManagerSection.values)
           GoRoute(
             path: '/gerente/${section.path}',

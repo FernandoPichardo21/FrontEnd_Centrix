@@ -2,10 +2,7 @@ import 'user_list_item.dart';
 import 'user_pagination.dart';
 
 class UsersResponse {
-  const UsersResponse({
-    required this.items,
-    required this.pagination,
-  });
+  const UsersResponse({required this.items, required this.pagination});
 
   final List<UserListItem> items;
   final UserPagination pagination;
@@ -14,8 +11,12 @@ class UsersResponse {
     final rawItems = json['items'];
     final itemsList = rawItems is List
         ? rawItems
-            .map((item) => UserListItem.fromJson(Map<String, dynamic>.from(item as Map)))
-            .toList()
+              .map(
+                (item) => UserListItem.fromJson(
+                  Map<String, dynamic>.from(item as Map),
+                ),
+              )
+              .toList()
         : <UserListItem>[];
 
     final rawPagination = json['pagination'];
@@ -28,10 +29,6 @@ class UsersResponse {
             totalPages: 1,
           );
 
-    return UsersResponse(
-      items: itemsList,
-      pagination: pagination,
-    );
+    return UsersResponse(items: itemsList, pagination: pagination);
   }
 }
-

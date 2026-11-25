@@ -11,11 +11,9 @@ import '../models/user_role_option.dart';
 import '../models/users_response.dart';
 
 class UserManagementViewModel extends ChangeNotifier {
-  UserManagementViewModel(
-    UserModel userModel,
-    DepartmentModel departmentModel,
-  )   : _userModel = userModel,
-        _departmentModel = departmentModel;
+  UserManagementViewModel(UserModel userModel, DepartmentModel departmentModel)
+    : _userModel = userModel,
+      _departmentModel = departmentModel;
 
   final UserModel _userModel;
   final DepartmentModel _departmentModel;
@@ -95,8 +93,14 @@ class UserManagementViewModel extends ChangeNotifier {
       } catch (_) {
         _roles = const [
           UserRoleOption(role: 'administrador', description: 'Acceso total'),
-          UserRoleOption(role: 'gerente', description: 'Gestión de departamento'),
-          UserRoleOption(role: 'soporte_tecnico', description: 'Atención de incidencias'),
+          UserRoleOption(
+            role: 'gerente',
+            description: 'Gestión de departamento',
+          ),
+          UserRoleOption(
+            role: 'soporte_tecnico',
+            description: 'Atención de incidencias',
+          ),
           UserRoleOption(role: 'colaborador', description: 'Usuario estándar'),
         ];
       }
@@ -164,7 +168,9 @@ class UserManagementViewModel extends ChangeNotifier {
   }
 
   Future<void> setDepartmentFilter(String token, String? departmentId) async {
-    _selectedDepartmentId = (departmentId != null && departmentId.isNotEmpty) ? departmentId : null;
+    _selectedDepartmentId = (departmentId != null && departmentId.isNotEmpty)
+        ? departmentId
+        : null;
     _currentPage = 1;
     await loadUsers(token);
   }
@@ -229,10 +235,7 @@ class UserManagementViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteUser(
-    String id,
-    String token,
-  ) async {
+  Future<bool> deleteUser(String id, String token) async {
     if (_disposed) return false;
     _isActionLoading = true;
     _errorMessage = null;
@@ -243,7 +246,7 @@ class UserManagementViewModel extends ChangeNotifier {
       await _userModel.deleteUser(id, token);
       if (_disposed) return false;
       _successMessage = 'Usuario eliminado correctamente.';
-      
+
       // Si la página queda vacía tras eliminar, ir a la página anterior si es posible
       if (_users.length == 1 && _currentPage > 1) {
         _currentPage--;
@@ -279,4 +282,3 @@ class UserManagementViewModel extends ChangeNotifier {
     super.dispose();
   }
 }
-

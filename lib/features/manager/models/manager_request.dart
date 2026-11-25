@@ -28,8 +28,12 @@ enum ManagerCategory {
     if (raw == null) return ManagerCategory.operations;
     final cleaned = raw.toLowerCase().trim();
     if (cleaned.contains('equip')) return ManagerCategory.equipment;
-    if (cleaned.contains('soft') || cleaned.contains('licen')) return ManagerCategory.software;
-    if (cleaned.contains('manten') || cleaned.contains('mobil')) return ManagerCategory.maintenance;
+    if (cleaned.contains('soft') || cleaned.contains('licen')) {
+      return ManagerCategory.software;
+    }
+    if (cleaned.contains('manten') || cleaned.contains('mobil')) {
+      return ManagerCategory.maintenance;
+    }
     return ManagerCategory.operations;
   }
 
@@ -101,15 +105,19 @@ class ManagerRequest {
       );
 
   factory ManagerRequest.fromJson(Map<String, dynamic> json) {
-    final rawAmount = json['estimatedAmount'] ?? json['estimated_amount'] ?? json['amountCents'];
+    final rawAmount =
+        json['estimatedAmount'] ??
+        json['estimated_amount'] ??
+        json['amountCents'];
     final int amountInCents = rawAmount is int
         ? rawAmount
         : rawAmount is num
-            ? (rawAmount * 100).round()
-            : 0;
+        ? (rawAmount * 100).round()
+        : 0;
 
     DateTime parsedDate = DateTime.now();
-    final rawDate = json['createdAtIso'] ?? json['createdAt'] ?? json['created_at'];
+    final rawDate =
+        json['createdAtIso'] ?? json['createdAt'] ?? json['created_at'];
     if (rawDate != null) {
       parsedDate = DateTime.tryParse(rawDate.toString()) ?? DateTime.now();
     }
@@ -117,15 +125,22 @@ class ManagerRequest {
     return ManagerRequest(
       id: (json['requestId'] ?? json['id'] ?? '').toString(),
       title: (json['title'] ?? '').toString(),
-      applicant: (json['authorName'] ?? json['applicant'] ?? 'Colaborador').toString(),
+      applicant: (json['authorName'] ?? json['applicant'] ?? 'Colaborador')
+          .toString(),
       category: ManagerCategory.fromString((json['category'] ?? '').toString()),
       amountCents: amountInCents,
       date: parsedDate,
       description: (json['description'] ?? '').toString(),
-      status: ManagerRequestStatus.fromString((json['status'] ?? '').toString()),
+      status: ManagerRequestStatus.fromString(
+        (json['status'] ?? '').toString(),
+      ),
       priority: (json['priority'] ?? 'Normal').toString(),
       attachment: json['attachment'] as String?,
-      comment: (json['rejectionReason'] ?? json['comment'] ?? json['rejection_reason']) as String?,
+      comment:
+          (json['rejectionReason'] ??
+                  json['comment'] ??
+                  json['rejection_reason'])
+              as String?,
     );
   }
 }
