@@ -27,6 +27,7 @@ class PushNotificationService {
 
   Future<void> initialize({
     Function(RemoteMessage)? onNotificationTapped,
+    Function(RemoteMessage)? onNotificationReceived,
   }) async {
     if (!isSupported || _isInitialized) return;
 
@@ -69,6 +70,9 @@ class PushNotificationService {
 
       // Escuchar cuando el usuario abre la app desde una notificación
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        if (onNotificationReceived != null) {
+          onNotificationReceived(message);
+        }
         if (onNotificationTapped != null) {
           onNotificationTapped(message);
         }
@@ -76,6 +80,9 @@ class PushNotificationService {
 
       // Escuchar notificaciones mientras la app está abierta (foreground)
       FirebaseMessaging.onMessage.listen((message) {
+        if (onNotificationReceived != null) {
+          onNotificationReceived(message);
+        }
         final notification = message.notification;
         if (notification != null) {
           _localNotifications.show(
