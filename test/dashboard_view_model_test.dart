@@ -21,6 +21,8 @@ void main() {
       DashboardModule.createTicket,
       DashboardModule.myTickets,
       DashboardModule.departments,
+      DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ]);
     expect(dashboardFor(['gerente']).modules, [
       DashboardModule.managerApprovals,
@@ -32,8 +34,14 @@ void main() {
       DashboardModule.pendingTickets,
       DashboardModule.departmentTickets,
       DashboardModule.departments,
+      DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ]);
     expect(dashboardFor(['administrador']).modules, [
+      DashboardModule.managerApprovals,
+      DashboardModule.managerBudget,
+      DashboardModule.managerRequests,
+      DashboardModule.managerReports,
       DashboardModule.createTicket,
       DashboardModule.myTickets,
       DashboardModule.pendingTickets,
@@ -41,15 +49,23 @@ void main() {
       DashboardModule.departments,
       DashboardModule.createUser,
       DashboardModule.userManagement,
+      DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ]);
     expect(dashboardFor(['soporte_tecnico']).modules, [
       DashboardModule.myTickets,
       DashboardModule.departments,
+      DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ]);
   });
 
   test('un usuario con varios roles conserva la unión de permisos', () {
     expect(dashboardFor(['colaborador', 'administrador']).modules, [
+      DashboardModule.managerApprovals,
+      DashboardModule.managerBudget,
+      DashboardModule.managerRequests,
+      DashboardModule.managerReports,
       DashboardModule.createTicket,
       DashboardModule.myTickets,
       DashboardModule.pendingTickets,
@@ -57,6 +73,8 @@ void main() {
       DashboardModule.departments,
       DashboardModule.createUser,
       DashboardModule.userManagement,
+      DashboardModule.createResourceRequest,
+      DashboardModule.myResourceRequests,
     ]);
   });
 }

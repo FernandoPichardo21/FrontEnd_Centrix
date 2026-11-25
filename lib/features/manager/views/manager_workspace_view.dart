@@ -5,27 +5,87 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/centrix_theme.dart';
 import '../../../core/widgets/centrix_glass.dart';
 import '../../auth/viewmodels/auth_view_model.dart';
+import '../../departments/models/department_model.dart';
 import '../models/manager_demo_model.dart';
 import '../models/manager_request.dart';
 import '../viewmodels/manager_view_model.dart';
 import 'widgets/manager_widgets.dart';
 
-class ManagerWorkspaceView extends StatelessWidget {
+class ManagerWorkspaceView extends StatefulWidget {
   const ManagerWorkspaceView({
     super.key,
     required this.section,
     required this.child,
     required this.isPreview,
   });
+
   final ManagerSection section;
   final Widget child;
   final bool isPreview;
+
+  @override
+  State<ManagerWorkspaceView> createState() => _ManagerWorkspaceViewState();
+}
+
+class _ManagerWorkspaceViewState extends State<ManagerWorkspaceView> {
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.isPreview) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final auth = context.read<AuthViewModel>();
+        if (auth.isAuthenticated) {
+          context.read<ManagerViewModel>().load(
+                auth.session!.token,
+                departmentId: auth.session!.user.departmentId,
+              );
+        }
+      });
+    }
+  }
+
+  void _showDepartmentSelector(BuildContext context) async {
+    final auth = context.read<AuthViewModel>();
+    final vm = context.read<ManagerViewModel>();
+    if (!auth.isAuthenticated) return;
+
+    try {
+      final deptModel = DepartmentModel();
+      final departments = await deptModel.fetchAll(auth.session!.token);
+      if (!context.mounted) return;
+
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => SimpleDialog(
+          title: const Text('Seleccionar departamento'),
+          children: [
+            for (final dept in departments)
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  vm.setDepartment(dept.departmentId, dept.name);
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.apartment_rounded, size: 18, color: CentrixColors.leaf),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(dept.name)),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      );
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 1080;
     final auth = context.watch<AuthViewModel>();
     final vm = context.watch<ManagerViewModel>();
+    final isAdmin = auth.session?.user.hasAnyRole(['administrador']) ?? false;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -38,15 +98,15 @@ class ManagerWorkspaceView extends StatelessWidget {
               const SizedBox(width: 18),
               Container(width: 1, height: 20, color: CentrixColors.sage),
               const SizedBox(width: 18),
-              const Text(
-                'Espacio de Gerente',
-                style: TextStyle(fontSize: 13, color: CentrixColors.forest),
+              Text(
+                isAdmin ? 'Supervisión de Departamentos' : 'Espacio de Gerente',
+                style: const TextStyle(fontSize: 13, color: CentrixColors.forest),
               ),
             ],
           ],
         ),
         actions: [
-          if (MediaQuery.sizeOf(context).width > 530)
+          if (widget.isPreview && MediaQuery.sizeOf(context).width > 530)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
@@ -62,20 +122,47 @@ class ManagerWorkspaceView extends StatelessWidget {
                 ),
               ),
             ),
-          IconButton(
-            tooltip: 'Restablecer datos de ejemplo',
-            onPressed: vm.reset,
-            icon: const Icon(Icons.restart_alt_rounded),
-          ),
+          if (widget.isPreview)
+            IconButton(
+              tooltip: 'Restablecer datos de ejemplo',
+              onPressed: vm.reset,
+              icon: const Icon(Icons.restart_alt_rounded),
+            )
+          else ...[
+            if (isAdmin)
+              TextButton.icon(
+                onPressed: () => _showDepartmentSelector(context),
+                icon: const Icon(Icons.swap_horiz_rounded, size: 18, color: CentrixColors.leaf),
+                label: Text(
+                  vm.departmentName,
+                  style: const TextStyle(color: CentrixColors.mint, fontSize: 12),
+                ),
+              ),
+            IconButton(
+              tooltip: 'Actualizar datos',
+              onPressed: auth.session?.token != null
+                  ? () => vm.load(
+                        auth.session!.token,
+                        departmentId: vm.departmentId ?? auth.session!.user.departmentId,
+                      )
+                  : null,
+              icon: const Icon(Icons.refresh_rounded),
+            ),
+          ],
           IconButton(
             key: const Key('exit-manager-preview'),
-            tooltip: isPreview ? 'Salir de vista previa' : 'Volver al inicio',
-            onPressed: () =>
-                context.go(auth.isAuthenticated ? '/home' : '/login'),
+            tooltip: widget.isPreview ? 'Salir de vista previa' : 'Volver al inicio',
+            onPressed: () => context.go(auth.isAuthenticated ? '/home' : '/login'),
             icon: const Icon(Icons.exit_to_app_rounded),
           ),
           const SizedBox(width: 8),
         ],
+        bottom: vm.isLoading
+            ? const PreferredSize(
+                preferredSize: Size.fromHeight(2),
+                child: LinearProgressIndicator(minHeight: 2),
+              )
+            : null,
       ),
       drawer: wide
           ? null
@@ -84,8 +171,8 @@ class ManagerWorkspaceView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: _ManagerNavigation(
-                    section: section,
-                    isPreview: isPreview,
+                    section: widget.section,
+                    isPreview: widget.isPreview,
                     inDrawer: true,
                   ),
                 ),
@@ -100,8 +187,8 @@ class ManagerWorkspaceView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 20, 0, 20),
                 child: _ManagerNavigation(
-                  section: section,
-                  isPreview: isPreview,
+                  section: widget.section,
+                  isPreview: widget.isPreview,
                 ),
               ),
             ),
@@ -115,40 +202,69 @@ class ManagerWorkspaceView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: CentrixColors.surface.withValues(alpha: .8),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: CentrixColors.outline),
-                        ),
-                        child: const Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.visibility_outlined,
-                              size: 16,
-                              color: CentrixColors.leaf,
-                            ),
-                            SizedBox(width: 9),
-                            Expanded(
-                              child: Text(
-                                'Datos de ejemplo · Los cambios solo se conservan durante esta vista previa.',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: CentrixColors.forest,
-                                  height: 1.4,
+                      if (widget.isPreview)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: CentrixColors.surface.withValues(alpha: .8),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: CentrixColors.outline),
+                          ),
+                          child: const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.visibility_outlined,
+                                size: 16,
+                                color: CentrixColors.leaf,
+                              ),
+                              SizedBox(width: 9),
+                              Expanded(
+                                child: Text(
+                                  'Datos de ejemplo · Los cambios solo se conservan durante esta vista previa.',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: CentrixColors.forest,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        )
+                      else if (vm.errorMessage != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: CentrixColors.error.withValues(alpha: .15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: CentrixColors.error.withValues(alpha: .4)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.error_outline, color: CentrixColors.error),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  vm.errorMessage!,
+                                  style: const TextStyle(color: CentrixColors.error, fontSize: 13),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: auth.session?.token != null
+                                    ? () => vm.load(auth.session!.token)
+                                    : null,
+                                child: const Text('Reintentar'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      child,
+                      const SizedBox(height: 16),
+                      widget.child,
                       const SizedBox(height: 32),
                       const Center(
                         child: Text(
@@ -178,11 +294,20 @@ class _ManagerNavigation extends StatelessWidget {
     required this.isPreview,
     this.inDrawer = false,
   });
+
   final ManagerSection section;
   final bool isPreview, inDrawer;
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ManagerViewModel>();
+    final auth = context.watch<AuthViewModel>();
+    final user = auth.session?.user;
+    final displayName = isPreview
+        ? 'Gerente de ejemplo'
+        : (user?.fullName.trim().isNotEmpty == true ? user!.fullName : 'Gerente');
+    final deptName = isPreview ? ManagerDemoModel.department : vm.departmentName;
+
     return CentrixGlass(
       dark: true,
       radius: 26,
@@ -191,17 +316,17 @@ class _ManagerNavigation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.space_dashboard_outlined,
                   color: CentrixColors.sage,
                   size: 21,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
-                  'GERENTE',
-                  style: TextStyle(
+                  (user?.hasAnyRole(['administrador']) ?? false) ? 'ADMIN' : 'GERENTE',
+                  style: const TextStyle(
                     color: CentrixColors.mint,
                     fontSize: 11,
                     letterSpacing: 1.8,
@@ -268,7 +393,7 @@ class _ManagerNavigation extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (item == ManagerSection.approvals)
+                          if (item == ManagerSection.approvals && vm.pending.isNotEmpty)
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 7,
@@ -305,25 +430,27 @@ class _ManagerNavigation extends StatelessWidget {
                   color: CentrixColors.mint.withValues(alpha: .12),
                 ),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.apartment_rounded,
                     color: CentrixColors.sage,
                     size: 24,
                   ),
-                  SizedBox(height: 14),
+                  const SizedBox(height: 14),
                   Text(
-                    ManagerDemoModel.department,
-                    style: TextStyle(
+                    deptName,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 5),
-                  Text(
+                  const SizedBox(height: 5),
+                  const Text(
                     'Planeación y seguimiento',
                     style: TextStyle(color: CentrixColors.sage, fontSize: 10),
                   ),
@@ -331,25 +458,27 @@ class _ManagerNavigation extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
-            const Row(
+            Row(
               children: [
                 CircleAvatar(
                   radius: 16,
                   backgroundColor: CentrixColors.sage,
                   child: Text(
-                    'SV',
-                    style: TextStyle(
+                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'G',
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: CentrixColors.ink,
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Gerente de ejemplo',
-                    style: TextStyle(color: CentrixColors.mint, fontSize: 11),
+                    displayName,
+                    style: const TextStyle(color: CentrixColors.mint, fontSize: 11),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

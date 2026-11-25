@@ -10,4 +10,6 @@ enum DashboardModule {
   managerBudget,
   managerRequests,
   managerReports,
+  createResourceRequest,
+  myResourceRequests,
 }

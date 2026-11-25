@@ -567,12 +567,13 @@ class _DecisionDialogState extends State<_DecisionDialog> {
         ),
         FilledButton(
           key: const Key('confirm-manager-decision'),
-          onPressed: () {
-            final error = widget.viewModel.decide(
+          onPressed: () async {
+            final error = await widget.viewModel.decide(
               widget.request,
               widget.decision,
               _comment.text,
             );
+            if (!context.mounted) return;
             if (error != null) {
               setState(() => _error = error);
               return;
@@ -582,8 +583,12 @@ class _DecisionDialogState extends State<_DecisionDialog> {
               SnackBar(
                 content: Text(
                   approve
-                      ? 'Solicitud aprobada en la vista previa.'
-                      : 'Solicitud rechazada en la vista previa.',
+                      ? (widget.viewModel.isPreview
+                          ? 'Solicitud aprobada en la vista previa.'
+                          : 'Solicitud aprobada exitosamente.')
+                      : (widget.viewModel.isPreview
+                          ? 'Solicitud rechazada en la vista previa.'
+                          : 'Solicitud rechazada exitosamente.'),
                 ),
               ),
             );

@@ -335,6 +335,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 vm.modules
                                     .where(
                                       (module) => [
+                                        DashboardModule.createTicket,
                                         DashboardModule.myTickets,
                                         DashboardModule.pendingTickets,
                                         DashboardModule.departmentTickets,
@@ -346,18 +347,42 @@ class _DashboardViewState extends State<DashboardView> {
                             ),
                           ),
                           _NavItem(
+                            icon: Icons.inventory_2_outlined,
+                            label: 'Solicitudes',
+                            active: _navigationIndex == 2,
+                            onTap: () => _navigateTab(
+                              2,
+                              () => _showModules(
+                                context,
+                                vm.modules
+                                    .where(
+                                      (module) => [
+                                        DashboardModule.createResourceRequest,
+                                        DashboardModule.myResourceRequests,
+                                        DashboardModule.managerApprovals,
+                                        DashboardModule.managerBudget,
+                                        DashboardModule.managerRequests,
+                                        DashboardModule.managerReports,
+                                      ].contains(module),
+                                    )
+                                    .toList(),
+                                title: 'Solicitudes y Recursos',
+                              ),
+                            ),
+                          ),
+                          _NavItem(
                             icon: Icons.forum_outlined,
                             label: 'Mensajes',
-                            active: _navigationIndex == 2,
+                            active: _navigationIndex == 3,
                             onTap: () =>
-                                _navigateTab(2, () => _showMessages(context)),
+                                _navigateTab(3, () => _showMessages(context)),
                           ),
                           _NavItem(
                             icon: Icons.person_outline_rounded,
                             label: 'Perfil',
-                            active: _navigationIndex == 3,
+                            active: _navigationIndex == 4,
                             onTap: () => _navigateTab(
-                              3,
+                              4,
                               () => _showProfile(context, vm, auth),
                             ),
                           ),
@@ -1078,20 +1103,23 @@ class _NavItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 2),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              size: 22,
+              size: 20,
               color: active ? DashboardColors.neon : DashboardColors.muted,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 8.5,
                 fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                 color: active ? DashboardColors.neon : DashboardColors.muted,
               ),

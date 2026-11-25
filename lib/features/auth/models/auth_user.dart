@@ -6,6 +6,7 @@ class AuthUser {
     required this.role,
     required this.roles,
     this.phone,
+    this.departmentId,
   });
 
   final String id;
@@ -14,6 +15,7 @@ class AuthUser {
   final String role;
   final List<String> roles;
   final String? phone;
+  final String? departmentId;
 
   bool hasAnyRole(Iterable<String> allowedRoles) {
     final currentRoles = {
@@ -35,7 +37,9 @@ class AuthUser {
 
   bool get canCreateUser => hasAnyRole(const ['administrador']);
   bool get canViewUsers => hasAnyRole(const ['administrador']);
-  bool get canViewManager => hasAnyRole(const ['gerente']);
+  bool get canViewManager => hasAnyRole(const ['gerente', 'administrador']);
+  bool get canCreateResourceRequest =>
+      hasAnyRole(const ['colaborador', 'gerente', 'administrador', 'soporte_tecnico']);
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     return AuthUser(
@@ -47,6 +51,7 @@ class AuthUser {
           .map((role) => role.toString())
           .toList(),
       phone: json['tel'] as String?,
+      departmentId: (json['department_id'] ?? json['departmentId']) as String?,
     );
   }
 }

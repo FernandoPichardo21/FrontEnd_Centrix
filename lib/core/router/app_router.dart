@@ -30,6 +30,8 @@ import '../../features/manager/views/manager_approvals_view.dart';
 import '../../features/manager/views/manager_budget_view.dart';
 import '../../features/manager/views/manager_requests_view.dart';
 import '../../features/manager/views/manager_reports_view.dart';
+import '../../features/manager/views/create_resource_request_view.dart';
+import '../../features/manager/views/my_resource_requests_view.dart';
 
 GoRouter createAppRouter(
   AuthViewModel auth,
@@ -71,34 +73,67 @@ GoRouter createAppRouter(
     return null;
   },
   routes: [
+    // ShellRoute para VISTA PREVIA (demo público sin sesión)
     ShellRoute(
       builder: (context, state, child) => ChangeNotifierProvider(
-        create: (_) => ManagerViewModel(ManagerDemoModel()),
+        create: (_) => ManagerViewModel(ManagerDemoModel(), isPreview: true),
         child: child,
       ),
       routes: [
-        for (final preview in [false, true]) ...[
+        GoRoute(
+          path: '/preview/gerente',
+          redirect: (_, _) => '/preview/gerente/aprobaciones',
+        ),
+        for (final section in ManagerSection.values)
           GoRoute(
-            path: '${preview ? '/preview' : ''}/gerente',
-            redirect: (_, _) =>
-                '${preview ? '/preview' : ''}/gerente/aprobaciones',
-          ),
-          for (final section in ManagerSection.values)
-            GoRoute(
-              path: '${preview ? '/preview' : ''}/gerente/${section.path}',
-              builder: (context, state) => ManagerWorkspaceView(
-                section: section,
-                isPreview: preview,
-                child: switch (section) {
-                  ManagerSection.approvals => const ManagerApprovalsView(),
-                  ManagerSection.budget => const ManagerBudgetView(),
-                  ManagerSection.requests => const ManagerRequestsView(),
-                  ManagerSection.reports => const ManagerReportsView(),
-                },
-              ),
+            path: '/preview/gerente/${section.path}',
+            builder: (context, state) => ManagerWorkspaceView(
+              section: section,
+              isPreview: true,
+              child: switch (section) {
+                ManagerSection.approvals => const ManagerApprovalsView(),
+                ManagerSection.budget => const ManagerBudgetView(),
+                ManagerSection.requests => const ManagerRequestsView(),
+                ManagerSection.reports => const ManagerReportsView(),
+              },
             ),
-        ],
+          ),
       ],
+    ),
+    // ShellRoute para ESPACIO REAL DE GERENTE Y ADMIN (conectado a backend)
+    ShellRoute(
+      builder: (context, state, child) => ChangeNotifierProvider(
+        create: (_) => ManagerViewModel(ManagerDemoModel(), isPreview: false),
+        child: child,
+      ),
+      routes: [
+        GoRoute(
+          path: '/gerente',
+          redirect: (_, _) => '/gerente/aprobaciones',
+        ),
+        for (final section in ManagerSection.values)
+          GoRoute(
+            path: '/gerente/${section.path}',
+            builder: (context, state) => ManagerWorkspaceView(
+              section: section,
+              isPreview: false,
+              child: switch (section) {
+                ManagerSection.approvals => const ManagerApprovalsView(),
+                ManagerSection.budget => const ManagerBudgetView(),
+                ManagerSection.requests => const ManagerRequestsView(),
+                ManagerSection.reports => const ManagerReportsView(),
+              },
+            ),
+          ),
+      ],
+    ),
+    GoRoute(
+      path: '/resource-requests/new',
+      builder: (context, state) => const CreateResourceRequestView(),
+    ),
+    GoRoute(
+      path: '/resource-requests/my',
+      builder: (context, state) => const MyResourceRequestsView(),
     ),
     GoRoute(path: '/login', builder: (context, state) => const LoginView()),
     GoRoute(

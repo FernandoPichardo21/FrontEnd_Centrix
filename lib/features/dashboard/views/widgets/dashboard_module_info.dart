@@ -15,7 +15,10 @@ extension DashboardModuleInfo on DashboardModule {
     DashboardModule.managerBudget => 'Presupuesto',
     DashboardModule.managerRequests => 'Solicitudes del departamento',
     DashboardModule.managerReports => 'Reportes',
+    DashboardModule.createResourceRequest => 'Pedir recursos',
+    DashboardModule.myResourceRequests => 'Mis recursos solicitados',
   };
+
   String get description => switch (this) {
     DashboardModule.createTicket => 'Reporta una nueva incidencia',
     DashboardModule.myTickets => 'Seguimiento de tus incidencias',
@@ -24,11 +27,14 @@ extension DashboardModuleInfo on DashboardModule {
     DashboardModule.departments => 'Conoce a las áreas de tu equipo',
     DashboardModule.createUser => 'Agrega una cuenta al equipo',
     DashboardModule.userManagement => 'Administra cuentas, roles y departamentos',
-    DashboardModule.managerApprovals => 'Revisa solicitudes · Vista previa',
-    DashboardModule.managerBudget => 'Recursos del área · Vista previa',
-    DashboardModule.managerRequests => 'Movimientos del equipo · Vista previa',
-    DashboardModule.managerReports => 'Resultados del área · Vista previa',
+    DashboardModule.managerApprovals => 'Revisa solicitudes de tu equipo',
+    DashboardModule.managerBudget => 'Recursos y presupuesto del área',
+    DashboardModule.managerRequests => 'Movimientos del equipo',
+    DashboardModule.managerReports => 'Resultados y métricas del área',
+    DashboardModule.createResourceRequest => 'Solicita equipo, material o presupuesto',
+    DashboardModule.myResourceRequests => 'Consulta el estado de tus solicitudes',
   };
+
   IconData get icon => switch (this) {
     DashboardModule.createTicket => Icons.add_rounded,
     DashboardModule.myTickets => Icons.confirmation_number_outlined,
@@ -41,7 +47,10 @@ extension DashboardModuleInfo on DashboardModule {
     DashboardModule.managerBudget => Icons.account_balance_wallet_outlined,
     DashboardModule.managerRequests => Icons.folder_open_rounded,
     DashboardModule.managerReports => Icons.bar_chart_rounded,
+    DashboardModule.createResourceRequest => Icons.add_shopping_cart_rounded,
+    DashboardModule.myResourceRequests => Icons.inventory_2_outlined,
   };
+
   String get route => switch (this) {
     DashboardModule.createTicket => '/tickets/new',
     DashboardModule.myTickets => '/tickets/my',
@@ -54,5 +63,7 @@ extension DashboardModuleInfo on DashboardModule {
     DashboardModule.managerBudget => '/gerente/presupuesto',
     DashboardModule.managerRequests => '/gerente/solicitudes',
     DashboardModule.managerReports => '/gerente/reportes',
+    DashboardModule.createResourceRequest => '/resource-requests/new',
+    DashboardModule.myResourceRequests => '/resource-requests/my',
   };
 }
